@@ -1,17 +1,20 @@
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 3000 );
+var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 5000 );
 var controls = new THREE.OrbitControls( camera );
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 var ambLight = new THREE.AmbientLight( 0x444444 );
 scene.add( ambLight );
 
+var axes = new THREE.AxisHelper( 1000 );
+scene.add(axes);
+
 var light = new THREE.DirectionalLight( 0xdddddd, 1 );
 light.position.set( -100, 100, 100 );
 scene.add( light );
 
-var geometry = new THREE.SphereGeometry( 60, 24, 16 );
+var geometry = new THREE.SphereGeometry( 60, 40, 40 );
 var material = new THREE.MeshPhongMaterial({ color: 0xaaaaaa, shininess: 40 });
 var cube = new THREE.Mesh( geometry, material );
 
