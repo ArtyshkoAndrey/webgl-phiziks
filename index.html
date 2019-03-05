@@ -14,7 +14,45 @@
 <body>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
-  <script src="js/meshLine.js"></script>
-  <script src="init.js"></script>
+  <script src="js/xyzloader.js"></script>
+  <script>
+    var camera, scene, renderer, control, light;
+      init();
+      animate();
+      function init() {
+        renderer = new THREE.WebGLRenderer( { antialias: true } ); 
+        renderer.setClearColor( 0xa4a4a4 );
+        renderer.setSize( window.innerWidth, window.innerHeight );        
+        document.body.appendChild( renderer.domElement );
+        //
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
+        camera.position.set( 0, 0, 10 );
+        control = new THREE.OrbitControls( camera, renderer.domElement );
+        control.rotateSpeed = 1;
+        control.noZoom = false;
+        control.zoomSpeed = 1.2;
+        control.staticMoving = true;
+        control.autoRotate = false;
+        scene = new THREE.Scene();
+        light = new THREE.DirectionalLight( 0xffffff, 1 );
+        light.position.set( 0, 0, 100 );
+        scene.add( light );
+        var axes = new THREE.AxisHelper( 1000 )
+        scene.add( axes )
+        // world
+        var loader = new XYZLoader();
+        var molecule = loader.load( 'https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz' );
+        scene.add( molecule );
+      }
+      function animate() {
+          requestAnimationFrame(animate);
+          render();
+      }
+      function render() {
+          light.position.copy(camera.position);
+          control.update();
+          renderer.render(scene, camera);
+      }
+  </script>
 </body>
 </html>
