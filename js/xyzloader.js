@@ -42,7 +42,7 @@ XYZLoader = function () {
 			var pos = allAtomSymbol.indexOf('#' + AtomSymbol + '#'); //console.log( allAtomSymbol + '_' + AtomSymbol + '_' + pos);
 			if (pos < 0) {
 				allAtomSymbol = allAtomSymbol + '#' + AtomSymbol + '#';
-				if ( atoms[AtomSymbol] == undefined ) atoms[AtomSymbol] = [ number, 0xdddddd, 0.7 ];
+				if ( atoms[AtomSymbol] == undefined ) atoms[AtomSymbol] = [ number, Math.random() * 0xFFFFFF, 0.7 ];
 				number++;
 			}
 		}
