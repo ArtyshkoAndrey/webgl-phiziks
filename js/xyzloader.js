@@ -1,16 +1,16 @@
 XYZLoader = function () {
-    
+
 	this.molecule = new THREE.Object3D();
     this.k = 0.4; // коэф. пропорциональности
 
-    var atoms = [], materials = [], geometries = [];	
+	var atoms = [], materials = [], geometries = [];
 	var arr = [];
 
 	this.load = function ( url ) {
 
 		this.parseXYZ( url );
 		return this.createModel();
-		
+
 	},
 
 	// Based on CanvasMol PDB parser
@@ -31,7 +31,7 @@ XYZLoader = function () {
 		// например
 		//0 - водород 1 - кислород  2 - углерод
 		// название, цвет молекулы и ее размер в ангстремах
-		//atoms['H'] = [ 0, 0x2a52be, 0.53]; 
+		//atoms['H'] = [ 0, 0x2a52be, 0.53];
 		//atoms['O'] = [ 1, 0xff0000, 0.60];
 		//atoms['C'] = [ 2, 0x00ff12, 0.91];
 
@@ -72,7 +72,7 @@ XYZLoader = function () {
 			this.molecule.add(Punct);
 		}
 
-		// связи 
+		// связи
 
 		for (i = 0; i < arr.length; i++) {
 
@@ -85,7 +85,7 @@ XYZLoader = function () {
 			for (j = 6; j < arr[i].length; j++) {
 
 				var num = arr[i][j] - 1; // номер атома
-	
+
 				var x2 = (parseFloat(arr[num][2]) + x1) / 2;
 				var y2 = (parseFloat(arr[num][3]) + y1) / 2;
 				var z2 = (parseFloat(arr[num][4]) + z1) / 2;
@@ -122,7 +122,7 @@ XYZLoader = function () {
 
 		return req.responseText;
 	}
-	
+
 	// http://stemkoski.github.io/Three.js/LeapMotion.html
 	this.cylinderMesh = function( pointX, pointY ) {
 		// edge from X to Y

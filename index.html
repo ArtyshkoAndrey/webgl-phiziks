@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<title>Document</title>
   <style>
     html, body {
@@ -12,47 +12,11 @@
   </style>
 </head>
 <body>
-  <script src="js/three.js"></script>
-  <script src="js/OrbitControls.js"></script>
-  <script src="js/xyzloader.js"></script>
-  <script>
-    var camera, scene, renderer, control, light;
-      init();
-      animate();
-      function init() {
-        renderer = new THREE.WebGLRenderer( { antialias: true } ); 
-        renderer.setClearColor( 0xa4a4a4 );
-        renderer.setSize( window.innerWidth, window.innerHeight );        
-        document.body.appendChild( renderer.domElement );
-        //
-        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
-        camera.position.set( 0, 0, 10 );
-        control = new THREE.OrbitControls( camera, renderer.domElement );
-        control.rotateSpeed = 1;
-        control.noZoom = false;
-        control.zoomSpeed = 1.2;
-        control.staticMoving = true;
-        control.autoRotate = false;
-        scene = new THREE.Scene();
-        light = new THREE.DirectionalLight( 0xffffff, 1 );
-        light.position.set( 0, 0, 100 );
-        scene.add( light );
-        var axes = new THREE.AxisHelper( 1000 )
-        scene.add( axes )
-        // world
-        var loader = new XYZLoader();
-        var molecule = loader.load( 'https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz' );
-        scene.add( molecule );
-      }
-      function animate() {
-          requestAnimationFrame(animate);
-          render();
-      }
-      function render() {
-          light.position.copy(camera.position);
-          control.update();
-          renderer.render(scene, camera);
-      }
-  </script>
+  <script src="js/libs/three.js"></script>
+  <script src="js/libs/OrbitControls.js"></script>
+  <!--<script src="js/xyzloader.js"></script>-->
+  <script src="js/Atoms.js"></script>
+  <script src="js/Molecule.js"></script>
+  <script src="js/init.js"></script>
 </body>
 </html>
