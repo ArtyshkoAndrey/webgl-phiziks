@@ -24,13 +24,21 @@ scene.add(axes)
 // Создание молекулы по парсеру
 let molecule = new Molecule(scene)
 molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz')
-scene.add(molecule.creatModel())
+molecule.creatModel()
+scene.add(molecule.Object)
 
 // Ререндер 3d для обновления на экране
 function render() {
 	light.position.copy(camera.position)
 	control.update()
 	renderer.render(scene, camera)
+  if (molecule.renderer) {
+    molecule.creatModel()
+    var selectedObject = scene.getObjectByName(molecule.Object.name);
+    scene.remove( selectedObject );
+    scene.add(molecule.Object)
+    molecule.renderer = false
+  }
 	requestAnimationFrame(render)
 }
 

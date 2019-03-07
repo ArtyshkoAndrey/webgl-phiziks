@@ -6,10 +6,15 @@ class Molecule {
 		this.geometries = []
 		this.k = 0.4
 		this.ColorAtoms = []
-		this.Object = new THREE.Object3D();
+		this.Object = new THREE.Object3D()
+    this.renderer = false
 	}
 	// Создание модели молекулы в 3d, переделать по отдельным атомам
 	creatModel () {
+    this.materials = []
+    this.geometries = []
+    this.Object = new THREE.Object3D()
+    this.Object.name = "molecule"
 		for (let Name in this.ColorAtoms) {
 			let material = new THREE.MeshPhongMaterial({
 				color: this.ColorAtoms[Name][1],
@@ -43,7 +48,7 @@ class Molecule {
 			for (let j = 0; j < this.atoms[i].connections.length; j++) {
 
 				let num = this.atoms[i].connections[j] - 1; // номер атома
-
+        console.log(this.atoms[num])
 				let x2 = (parseFloat(this.atoms[num].x) + x1) / 2;
 				let y2 = (parseFloat(this.atoms[num].y) + y1) / 2;
 				let z2 = (parseFloat(this.atoms[num].z) + z1) / 2;
@@ -54,7 +59,6 @@ class Molecule {
 				this.Object.add(fingerLength);
 			}
 		}
-		return this.Object;
 	}
 
 	// Рисование соединения цилиндрами
@@ -138,4 +142,30 @@ class Molecule {
 		req.send(null)
 		return req.responseText
 	}
+
+  deleteAtom (number) {
+    let indexAtom = null
+    this.atoms.forEach( function (d, index) {
+      if (Number(d.number) === Number(number)) {
+        indexAtom = index
+      }
+    })
+    if (indexAtom) {
+      this.atoms.splice(indexAtom, 1)
+      let self = this
+      this.atoms.forEach( function (atom, index) {
+        console.log(index)
+        atom.connections.forEach( function (con, indexCon) {
+          if (Number(con) === number) {
+            self.atoms[index].connections.splice(indexCon, 1)
+            console.log(self.atoms)
+          }
+        })
+      })
+      console.log(self.atoms)
+      this.renderer = true
+    } else {
+      alert('Данного атома не существует')
+    }
+  }
 }
