@@ -39,24 +39,38 @@ class Molecule {
 
 		for (let i = 0; i < this.atoms.length; i++) {
 
-			let num = this.atoms[i].number - 1; // номер атома
+			let num = this.atoms[i].number; // номер атома
+			let tempAtom = null
+			let self = this
+			this.atoms.forEach( function (d, index) {
+				if (Number(num) === Number(d.number)) {
+					tempAtom = self.atoms[index]
+					console.log(tempAtom)
+				}
+			})
+			let x1 = parseFloat(tempAtom.x);
+			let y1 = parseFloat(tempAtom.y);
+			let z1 = parseFloat(tempAtom.z);
 
-			let x1 = parseFloat(this.atoms[num].x);
-			let y1 = parseFloat(this.atoms[num].y);
-			let z1 = parseFloat(this.atoms[num].z);
+			if (this.atoms[i].connections.length > 0) {
+				for (let j = 0; j < this.atoms[i].connections.length; j++) {
 
-			for (let j = 0; j < this.atoms[i].connections.length; j++) {
+					let num = this.atoms[i].connections[j]; // номер атома
+					tempAtom = null
+					this.atoms.forEach( function (d, index) {
+						if (Number(num) === Number(d.number)) {
+							tempAtom = self.atoms[index]
+						}
+					})
+					let x2 = (parseFloat(tempAtom.x) + x1) / 2;
+					let y2 = (parseFloat(tempAtom.y) + y1) / 2;
+					let z2 = (parseFloat(tempAtom.z) + z1) / 2;
 
-				let num = this.atoms[i].connections[j] - 1; // номер атома
-        console.log(this.atoms[num])
-				let x2 = (parseFloat(this.atoms[num].x) + x1) / 2;
-				let y2 = (parseFloat(this.atoms[num].y) + y1) / 2;
-				let z2 = (parseFloat(this.atoms[num].z) + z1) / 2;
 
-
-				let fingerLength = this.cylinderMesh(new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2));
-				fingerLength.material = this.materials[this.ColorAtoms[this.atoms[i].name][0]];
-				this.Object.add(fingerLength);
+					let fingerLength = this.cylinderMesh(new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2));
+					fingerLength.material = this.materials[this.ColorAtoms[this.atoms[i].name][0]];
+					this.Object.add(fingerLength);
+				}
 			}
 		}
 	}
@@ -91,7 +105,7 @@ class Molecule {
 		}
 
 		// переводим info в массив вида [ [ 1, C, -0.231579, -0.350841, -0.037475, 1, 2, 4, 5, 6 ], [2, C, 0.229441...] ... ]
-		
+
 		for (let i = 1; i < info.length; i++) {
 			// this.atoms[i - 1] = info[i].match(/\S+/g); s
 			this.atoms[i - 1] = new Atom()
@@ -105,7 +119,6 @@ class Molecule {
 					this.atoms[i - 1].connections.push(info[i].match(/\S+/g)[j])
 				}
 			}
-			console.log(this.atoms)
 		}
 
 		let allAtomSymbol = ''
@@ -119,7 +132,6 @@ class Molecule {
 				number++
 			}
 		}
-		console.log(this.ColorAtoms)
 	}
 
 	// Парсер файла. Переделать под наш
