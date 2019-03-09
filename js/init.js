@@ -12,10 +12,10 @@ control.rotateSpeed = 1
 control.noZoom = false
 control.zoomSpeed = 1.2
 control.staticMoving = true
-control.autoRotate = true
+control.autoRotate = false
 scene = new THREE.Scene()
 light = new THREE.DirectionalLight(0xffffff, 1)
-light.position.set(0, 0, 100)
+light.position.set(10, 10, 10)
 scene.add(light)
 
 // Линии осей
@@ -24,17 +24,17 @@ scene.add(axes)
 
 // Создание молекулы по парсеру
 let molecule = new Molecule(scene)
-molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/retinoic.xyz')
+molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz')
 molecule.creatModel()
 scene.add(molecule.Object)
 let bbox = new THREE.Box3().setFromObject(molecule.Object)
-camera.position.set(bbox.max.z - bbox.min.z, bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y)
+camera.position.set(10, 10, 10)
 control.target = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
+control.target0 = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
 
 // Ререндер 3d для обновления на экране
 let pos = camera.clone()
 function render() {
-	light.position.copy(camera.position)
 	control.update()
   if (camera.position.x !== pos.position.x) {
     renderer.render(scene, camera)
@@ -48,6 +48,7 @@ function render() {
     renderer.render(scene, camera)
   }
   pos = camera.clone()
+  light.position.copy(camera.position)
 	requestAnimationFrame(render)
 }
 
@@ -59,5 +60,6 @@ function onWindowResize(){
 	renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.render(scene, camera)
 }
+control.update()
 renderer.render(scene, camera)
 render();
