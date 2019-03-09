@@ -24,26 +24,30 @@ scene.add(axes)
 
 // Создание молекулы по парсеру
 let molecule = new Molecule(scene)
-molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz')
+molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/retinoic.xyz')
 molecule.creatModel()
 scene.add(molecule.Object)
-let bbox = new THREE.Box3().setFromObject(molecule.Object);
-// camera.lookAt((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
+let bbox = new THREE.Box3().setFromObject(molecule.Object)
 camera.position.set(bbox.max.z - bbox.min.z, bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y)
 control.target = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
 
 // Ререндер 3d для обновления на экране
+let pos = camera.clone()
 function render() {
 	light.position.copy(camera.position)
 	control.update()
-	renderer.render(scene, camera)
+  if (camera.position.x !== pos.position.x) {
+    renderer.render(scene, camera)
+  }
   if (molecule.renderer) {
     molecule.creatModel()
     var selectedObject = scene.getObjectByName(molecule.Object.name);
     scene.remove( selectedObject );
     scene.add(molecule.Object)
     molecule.renderer = false
+    renderer.render(scene, camera)
   }
+  pos = camera.clone()
 	requestAnimationFrame(render)
 }
 
@@ -53,6 +57,7 @@ function onWindowResize(){
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.render(scene, camera)
 }
-
+renderer.render(scene, camera)
 render();

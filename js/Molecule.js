@@ -24,7 +24,7 @@ class Molecule {
 				depthTest: true
 			});
 			this.materials.push(material);
-			let geometry = new THREE.SphereGeometry(this.ColorAtoms[Name][2] * this.k, 16, 16); // геометрия сферы
+			let geometry = new THREE.SphereGeometry(this.ColorAtoms[Name][2] * this.k, 10, 10); // геометрия сферы
 			this.geometries.push(geometry);
 		}
 
