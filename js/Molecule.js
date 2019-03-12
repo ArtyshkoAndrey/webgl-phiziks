@@ -8,6 +8,7 @@ class Molecule {
 		this.ColorAtoms = []
     this.renderer = false
     this.atoms3D = []
+    this.tempAtom = {}
 	}
 	// Создание модели молекулы в 3d, переделать по отдельным атомам
 	creatModel () {
