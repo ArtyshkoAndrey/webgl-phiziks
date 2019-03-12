@@ -6,15 +6,13 @@ class Molecule {
 		this.geometries = []
 		this.k = 0.4
 		this.ColorAtoms = []
-		this.Object = new THREE.Object3D()
     this.renderer = false
+    this.atoms3D = []
 	}
 	// Создание модели молекулы в 3d, переделать по отдельным атомам
 	creatModel () {
     this.materials = []
     this.geometries = []
-    this.Object = new THREE.Object3D()
-    this.Object.name = "molecule"
 		for (let Name in this.ColorAtoms) {
 			let material = new THREE.MeshPhongMaterial({
 				color: this.ColorAtoms[Name][1],
@@ -30,9 +28,18 @@ class Molecule {
 
 		for (let i = 0; i < this.atoms.length; i++) {
 			let Name = this.atoms[i].name // номер элемента
-			let Punct = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], this.materials[this.ColorAtoms[Name][0]])
+      let mat = new THREE.MeshPhongMaterial({
+        color: this.ColorAtoms[Name][1],
+        specular: 0x00b2fc,
+        shininess: 12,
+        blending: THREE.NormalBlending,
+        depthTest: true
+      })
+			let Punct = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], mat)
+      Punct.name = this.atoms[i].name
 			Punct.position.set(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
-			this.Object.add(Punct)
+      this.atoms3D.push(Punct)
+      this.scene.add(Punct)
 		}
 
 		// связи
@@ -45,7 +52,6 @@ class Molecule {
 			this.atoms.forEach( function (d, index) {
 				if (Number(num) === Number(d.number)) {
 					tempAtom = self.atoms[index]
-					console.log(tempAtom)
 				}
 			})
 			let x1 = parseFloat(tempAtom.x);
@@ -68,8 +74,16 @@ class Molecule {
 
 
 					let fingerLength = this.cylinderMesh(new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2));
-					fingerLength.material = this.materials[this.ColorAtoms[this.atoms[i].name][0]];
-					this.Object.add(fingerLength);
+					let mat = new THREE.MeshPhongMaterial({
+            color: this.ColorAtoms[this.atoms[i].name][1],
+            specular: 0x00b2fc,
+            shininess: 12,
+            blending: THREE.NormalBlending,
+            depthTest: true
+          })
+          console.log(mat)
+          fingerLength.material = mat;
+          this.scene.add(fingerLength)
 				}
 			}
 		}

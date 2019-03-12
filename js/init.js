@@ -26,14 +26,15 @@ scene.add(axes)
 let molecule = new Molecule(scene)
 molecule.finderAtoms('https://raw.githubusercontent.com/alexan0308/threejs/master/examples/XYZ/book.xyz')
 molecule.creatModel()
-scene.add(molecule.Object)
-let bbox = new THREE.Box3().setFromObject(molecule.Object)
+// scene.add(molecule.Object)
+// let bbox = new THREE.Box3().setFromObject(molecule.Object)
 camera.position.set(10, 10, 10)
-control.target = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
-control.target0 = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
+// control.target = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
+// control.target0 = new THREE.Vector3((bbox.max.z - bbox.min.z)/2, (bbox.max.x - bbox.min.x)/2,(bbox.max.y - bbox.min.y)/2)
 
 // Ререндер 3d для обновления на экране
 let pos = camera.clone()
+
 function render() {
 	control.update()
   if (camera.position.x !== pos.position.x) {
@@ -60,6 +61,36 @@ function onWindowResize(){
 	renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.render(scene, camera)
 }
+
 control.update()
 renderer.render(scene, camera)
+
+var vector = new THREE.Vector3();
+var raycaster = new THREE.Raycaster();
+
+window.addEventListener( 'mousedown', onMouseMove, false );
+
+function onMouseMove( event ) {
+  vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.05 ); // z = 0.5 important!
+  vector.unproject( camera );
+
+  raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+  var intersects = raycaster.intersectObjects( scene.children, true );
+  if (intersects.length > 0) {
+    if (intersects[0].object.type !== 'LineSegments') {
+      scene.children.forEach(function (atom) {
+        if (atom instanceof THREE.Mesh)
+          if (atom.geometry instanceof THREE.SphereGeometry)
+            atom.material.color.set(molecule.ColorAtoms[atom.name][1])
+      })
+      console.log(intersects[0].object)
+      if (intersects[0].object instanceof THREE.Mesh)
+        if (intersects[0].object.geometry instanceof THREE.SphereGeometry)
+          intersects[ 0 ].object.material.color.set( 0xff0000 )
+    }
+    console.log(intersects[0].object)
+  }
+  renderer.render(scene, camera)
+}
+
 render();
