@@ -42,9 +42,6 @@ function render() {
   }
   if (molecule.renderer) {
     molecule.creatModel()
-    var selectedObject = scene.getObjectByName(molecule.Object.name);
-    scene.remove( selectedObject );
-    scene.add(molecule.Object)
     molecule.renderer = false
     renderer.render(scene, camera)
   }

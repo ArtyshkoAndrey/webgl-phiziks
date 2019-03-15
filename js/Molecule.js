@@ -169,6 +169,8 @@ class Molecule {
 		return req.responseText
 	}
 
+  // Переписать функцию удаления атома
+
   deleteAtom (number) {
     let indexAtom = null
     this.atoms.forEach( function (d, index) {
