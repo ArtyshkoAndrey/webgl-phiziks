@@ -7,7 +7,6 @@ class Molecule {
 		this.k = 0.4
 		this.ColorAtoms = []
     this.renderer = false
-    this.atoms3D = []
     this.tempAtom = {}
 	}
 	// Создание модели молекулы в 3d, переделать по отдельным атомам
@@ -36,11 +35,10 @@ class Molecule {
         blending: THREE.NormalBlending,
         depthTest: true
       })
-			let Punct = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], mat)
-      Punct.name = this.atoms[i].name
-			Punct.position.set(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
-      this.atoms3D.push(Punct)
-      this.scene.add(Punct)
+			this.atoms[i].Object3D = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], mat)
+  		this.atoms[i].Object3D.name = this.atoms[i].name
+			this.atoms[i].Object3D.position.set(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
+      this.scene.add(this.atoms[i].Object3D)
 		}
 
 		// связи
@@ -74,7 +72,7 @@ class Molecule {
 					let z2 = (parseFloat(tempAtom.z) + z1) / 2;
 
 
-					let fingerLength = this.cylinderMesh(new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2));
+					let fingerLength = this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1));
 					let mat = new THREE.MeshPhongMaterial({
             color: this.ColorAtoms[this.atoms[i].name][1],
             specular: 0x00b2fc,
@@ -84,7 +82,8 @@ class Molecule {
           })
           console.log(mat)
           fingerLength.material = mat;
-          this.scene.add(fingerLength)
+          this.atoms[i].Object3D.add(fingerLength)
+          // this.scene.add(fingerLength)
 				}
 			}
 		}

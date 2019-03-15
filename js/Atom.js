@@ -6,5 +6,6 @@ class Atom {
 		this.z = null
 		this.name = null
 		this.connections = []
+		this.Object3D = {}
 	}
 }

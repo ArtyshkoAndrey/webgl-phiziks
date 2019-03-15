@@ -80,13 +80,22 @@ function onMouseMove( event ) {
     if (intersects[0].object.type !== 'LineSegments') {
       scene.children.forEach(function (atom) {
         if (atom instanceof THREE.Mesh)
-          if (atom.geometry instanceof THREE.SphereGeometry)
+          if (atom.geometry instanceof THREE.SphereGeometry) {
             atom.material.color.set(molecule.ColorAtoms[atom.name][1])
+            atom.children.forEach(function (cycle) {
+              cycle.material.color.set(molecule.ColorAtoms[atom.name][1])
+            })
+          }
       })
       console.log(intersects[0].object)
       if (intersects[0].object instanceof THREE.Mesh)
-        if (intersects[0].object.geometry instanceof THREE.SphereGeometry)
+        if (intersects[0].object.geometry instanceof THREE.SphereGeometry) {
           intersects[ 0 ].object.material.color.set( 0xff0000 )
+          intersects[ 0 ].object.children.forEach(function (cycle) {
+            cycle.material.color.set(0xff0000)
+          })
+        }
+
     }
     console.log(intersects[0].object)
   }
