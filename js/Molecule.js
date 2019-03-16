@@ -38,6 +38,10 @@ class Molecule {
 			this.atoms[i].Object3D = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], mat)
   		this.atoms[i].Object3D.name = this.atoms[i].name
 			this.atoms[i].Object3D.position.set(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
+      this.atoms[i].Object3D.userData['AtomPosition'] = new THREE.Vector3(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
+      this.atoms[i].Object3D.userData['AtomNumber'] = this.atoms[i].number
+      this.atoms[i].Object3D.userData['AtomName'] = this.atoms[i].name
+      this.atoms[i].Object3D.userData['AtomConnections'] = this.atoms[i].connections
       this.scene.add(this.atoms[i].Object3D)
 		}
 

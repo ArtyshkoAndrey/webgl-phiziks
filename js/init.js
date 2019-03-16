@@ -3,9 +3,10 @@ let camera, scene, renderer, control, light
 renderer = new THREE.WebGLRenderer({antialias: true})
 renderer.setClearColor(0xa4a4a4)
 // renderer.setClearColor(0x000000)
-renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.setSize(window.innerWidth - 100, window.innerHeight)
 document.body.appendChild(renderer.domElement)
-camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500)
+document.getElementsByTagName("canvas")[0].style.marginLeft = '100px'
+camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 100) / window.innerHeight, 1, 500)
 camera.position.set(0, 10, 10)
 control = new THREE.OrbitControls(camera, renderer.domElement)
 control.rotateSpeed = 1
@@ -53,9 +54,9 @@ function render() {
 // Онлайн изменение размера 3d канваса и соотношения сторон
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize(){
-	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.aspect = (window.innerWidth - 100) / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( window.innerWidth - 100, window.innerHeight );
   renderer.render(scene, camera)
 }
 
@@ -68,7 +69,7 @@ var raycaster = new THREE.Raycaster();
 window.addEventListener( 'mousedown', onMouseMove, false );
 
 function onMouseMove( event ) {
-  vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.05 ); // z = 0.5 important!
+  vector.set( ( event.clientX / (window.innerWidth + 100) ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.05 ); // z = 0.5 important!
   vector.unproject( camera );
 
   raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
@@ -91,6 +92,8 @@ function onMouseMove( event ) {
           intersects[ 0 ].object.children.forEach(function (cycle) {
             cycle.material.color.set(0xff0000)
           })
+          document.getElementById('InfoForAtom').textContent = intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " "
+          // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
         }
 
     }
