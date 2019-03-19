@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     canvas#gl(style='margin-left: 100px')
-    div(style='width: 100px; height: 100%; position: absolute; z-index: 100; background: white')
+    div(style='width: 100px; height: 100%; position: absolute; z-index: 100; background: white; top: 0; left: 0')
       .row
         .col-12
           p#InfoForAtom
@@ -37,6 +37,7 @@
         this.gl.initMolecule(this.molecule)
         this.gl.render()
         document.getElementById('gl').addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
+        window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
       })
     }
   }

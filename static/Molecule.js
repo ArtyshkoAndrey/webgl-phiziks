@@ -9,9 +9,8 @@ export default class Molecule {
     this.materials = []
     this.geometries = []
     this.k = 0.4
-    this.ColorAtoms = []
+    this.ColorAtoms = {}
     this.renderer = false
-    this.tempAtom = {}
   }
   // Создание модели молекулы в 3d, переделать по отдельным атомам
   creatModel () {
@@ -94,9 +93,9 @@ export default class Molecule {
     let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
 
     // cylinder: radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight
-    var edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
+    let edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
 
-    var edgeMesh = new THREE.Mesh(edgeGeometry, new THREE.MeshBasicMaterial({
+    let edgeMesh = new THREE.Mesh(edgeGeometry, new THREE.MeshBasicMaterial({
       color: 0x0000ff
     }))
     edgeMesh.position.copy(new THREE.Vector3().addVectors(pointX, direction.multiplyScalar(0.5)))
@@ -107,14 +106,12 @@ export default class Molecule {
   // Создание Атомов по парсеру файла
   finderAtoms (url) {
     let sssr = this.fileGetContents(url)
-    // console.log(sssr)
     let info = sssr.split('\n')
     if (info[info.length - 1].length < 1) {
       info.pop()
     }
     // переводим info в массив вида [ [ 1, C, -0.231579, -0.350841, -0.037475, 1, 2, 4, 5, 6 ], [2, C, 0.229441...] ... ]
     for (let i = 1; i < info.length; i++) {
-      // this.atoms[i - 1] = info[i].match(/\S+/g); s
       this.atoms[i - 1] = new Atom()
       this.atoms[i - 1].x = info[i].match(/\S+/g)[2]
       this.atoms[i - 1].y = info[i].match(/\S+/g)[3]

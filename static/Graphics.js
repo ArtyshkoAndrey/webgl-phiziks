@@ -51,8 +51,6 @@ export default class Graphics {
     requestAnimationFrame(this.render.bind(this))
   }
   raycast (event) {
-    // console.log(event)
-    // console.log(this.canvas)
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
     vector.set(((event.clientX - 100) / this.canvas.width) * 2 - 1, -(event.clientY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
@@ -61,37 +59,48 @@ export default class Graphics {
     let intersects = raycaster.intersectObjects(this.scene.children, true)
     if (intersects.length > 0) {
       if (intersects[0].object.type !== 'LineSegments') {
-        this.scene.children.forEach(function (atom) {
-          if (atom instanceof THREE.Mesh) {
-            if (atom.geometry instanceof THREE.SphereGeometry) {
-              atom.material.color.set(this.molecule.ColorAtoms[atom.name][1])
-              atom.children.forEach(function (cycle) {
-                cycle.material.color.set(this.molecule.ColorAtoms[atom.name][1])
-              })
-            }
-          }
-        })
+        this.tick(intersects[0])
         console.log(intersects[0].object)
-        console.log('Test')
-        if (intersects[0].object instanceof THREE.Mesh) {
-          if (intersects[0].object.geometry instanceof THREE.SphereGeometry) {
-            intersects[ 0 ].object.material.color.set(0xff0000)
-            intersects[ 0 ].object.children.forEach(function (cycle) {
-              cycle.material.color.set(0xff0000)
-            })
-            // document.getElementById('InfoForAtom').textContent = intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " "
-            // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
-          }
+      } else {
+        if (intersects[1].object instanceof THREE.Mesh) {
+          this.tick(intersects[1])
+          console.log(intersects[1].object)
         }
       }
-      console.log(intersects[0].object)
     }
+    this.renderer.render(this.scene, this.camera)
+  }
+  tick (intersects) {
+    let self = this
+    this.scene.children.forEach(function (atom) {
+      if (atom instanceof THREE.Mesh) {
+        if (atom.geometry instanceof THREE.SphereGeometry) {
+          atom.material.color.set(self.molecule.ColorAtoms[atom.name][1])
+          let scope = self
+          atom.children.forEach(function (cycle) {
+            cycle.material.color.set(scope.molecule.ColorAtoms[atom.name][1])
+          })
+        }
+      }
+    })
+    if (intersects.object instanceof THREE.Mesh) {
+      if (intersects.object.geometry instanceof THREE.SphereGeometry) {
+        intersects.object.material.color.set(0xff0000)
+        intersects.object.children.forEach(function (cycle) {
+          cycle.material.color.set(0xff0000)
+        })
+        document.getElementById('InfoForAtom').textContent = intersects.object.userData.AtomNumber + ' ' + intersects.object.userData.AtomName + ': ' + intersects.object.userData.AtomPosition.x + ' ' + intersects.object.userData.AtomPosition.y + ' ' + intersects.object.userData.AtomPosition.z
+        // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
+      }
+    }
+  }
+  resizeWindow () {
+    this.camera.aspect = (window.innerWidth - 100) / window.innerHeight
+    this.camera.updateProjectionMatrix()
+    this.renderer.setSize(window.innerWidth - 100, window.innerHeight)
     this.renderer.render(this.scene, this.camera)
   }
   retThis () {
     return this
-  }
-  addObject (Object) {
-    this.scene.add(Object)
   }
 }
