@@ -59,40 +59,16 @@ export default class Graphics {
     let intersects = raycaster.intersectObjects(this.scene.children, true)
     if (intersects.length > 0) {
       if (intersects[0].object.type !== 'LineSegments') {
-        this.tick(intersects[0])
+        this.molecule.tick(intersects[0])
         console.log(intersects[0].object)
       } else {
         if (intersects[1].object instanceof THREE.Mesh) {
-          this.tick(intersects[1])
+          this.molecule.tick(intersects[1])
           console.log(intersects[1].object)
         }
       }
     }
     this.renderer.render(this.scene, this.camera)
-  }
-  tick (intersects) {
-    let self = this
-    this.scene.children.forEach(function (atom) {
-      if (atom instanceof THREE.Mesh) {
-        if (atom.geometry instanceof THREE.SphereGeometry) {
-          atom.material.color.set(self.molecule.ColorAtoms[atom.name][1])
-          let scope = self
-          atom.children.forEach(function (cycle) {
-            cycle.material.color.set(scope.molecule.ColorAtoms[atom.name][1])
-          })
-        }
-      }
-    })
-    if (intersects.object instanceof THREE.Mesh) {
-      if (intersects.object.geometry instanceof THREE.SphereGeometry) {
-        intersects.object.material.color.set(0xff0000)
-        intersects.object.children.forEach(function (cycle) {
-          cycle.material.color.set(0xff0000)
-        })
-        document.getElementById('InfoForAtom').textContent = intersects.object.userData.AtomNumber + ' ' + intersects.object.userData.AtomName + ': ' + intersects.object.userData.AtomPosition.x + ' ' + intersects.object.userData.AtomPosition.y + ' ' + intersects.object.userData.AtomPosition.z
-        // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
-      }
-    }
   }
   resizeWindow () {
     this.camera.aspect = (window.innerWidth - 100) / window.innerHeight

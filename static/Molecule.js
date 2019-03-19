@@ -10,7 +10,7 @@ export default class Molecule {
     this.geometries = []
     this.k = 0.4
     this.ColorAtoms = {}
-    this.renderer = false
+    this.ticks = []
   }
   // Создание модели молекулы в 3d, переделать по отдельным атомам
   creatModel () {
@@ -145,29 +145,78 @@ export default class Molecule {
     return fs.readFileSync(url, 'utf-8')
   }
   // Переписать функцию удаления атома
-  deleteAtom (number) {
-    let indexAtom = null
-    this.atoms.forEach(function (d, index) {
-      if (Number(d.number) === Number(number)) {
-        indexAtom = index
+  // deleteAtom (number) {
+  //   let indexAtom = null
+  //   this.atoms.forEach(function (d, index) {
+  //     if (Number(d.number) === Number(number)) {
+  //       indexAtom = index
+  //     }
+  //   })
+  //   if (indexAtom) {
+  //     this.atoms.splice(indexAtom, 1)
+  //     let self = this
+  //     this.atoms.forEach(function (atom, index) {
+  //       // console.log(index)
+  //       atom.connections.forEach(function (con, indexCon) {
+  //         if (Number(con) === number) {
+  //           self.atoms[index].connections.splice(indexCon, 1)
+  //           // console.log(self.atoms)
+  //         }
+  //       })
+  //     })
+  //     // console.log(self.atoms)
+  //     this.renderer = true
+  //   } else {
+  //     alert('Данного атома не существует')
+  //   }
+  // }
+  tick (intersects) {
+    let self = this
+    this.scene.children.forEach(function (atom) {
+      if (atom instanceof THREE.Mesh) {
+        if (atom.geometry instanceof THREE.SphereGeometry) {
+          let scope = self
+          let ticked = false
+          for (let i = 0; i < self.ticks.length; i++) {
+            if (Number(self.ticks[i]) === Number(atom.userData['AtomNumber'])) {
+              ticked = true
+            }
+          }
+          if (ticked === false) {
+            atom.material.color.set(self.ColorAtoms[atom.name][1])
+            atom.children.forEach(function (cycle) {
+              cycle.material.color.set(scope.ColorAtoms[atom.name][1])
+            })
+          }
+        }
       }
     })
-    if (indexAtom) {
-      this.atoms.splice(indexAtom, 1)
-      let self = this
-      this.atoms.forEach(function (atom, index) {
-        // console.log(index)
-        atom.connections.forEach(function (con, indexCon) {
-          if (Number(con) === number) {
-            self.atoms[index].connections.splice(indexCon, 1)
-            // console.log(self.atoms)
+    if (intersects.object instanceof THREE.Mesh) {
+      if (intersects.object.geometry instanceof THREE.SphereGeometry) {
+        let ticked = false
+        for (let i = 0; i < this.ticks.length; i++) {
+          if (Number(this.ticks[i]) === Number(intersects.object.userData['AtomNumber'])) {
+            ticked = true
           }
-        })
-      })
-      // console.log(self.atoms)
-      this.renderer = true
-    } else {
-      alert('Данного атома не существует')
+        }
+        if (ticked === false) {
+          intersects.object.material.color.set(0xff0000)
+          intersects.object.children.forEach(function (cycle) {
+            cycle.material.color.set(0xff0000)
+          })
+          document.getElementById('InfoForAtom').textContent = intersects.object.userData.AtomNumber + ' ' + intersects.object.userData.AtomName + ': ' + intersects.object.userData.AtomPosition.x + ' ' + intersects.object.userData.AtomPosition.y + ' ' + intersects.object.userData.AtomPosition.z
+          // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
+          this.ticks.push(intersects.object.userData['AtomNumber'])
+        } else {
+          intersects.object.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']][1])
+          let self = this
+          intersects.object.children.forEach(function (cycle) {
+            cycle.material.color.set(self.ColorAtoms[intersects.object.userData['AtomName']][1])
+          })
+          let num = this.ticks.indexOf(intersects.object.userData['AtomNumber'])
+          this.ticks.splice(num, 1)
+        }
+      }
     }
   }
 }
