@@ -2,42 +2,27 @@
 import * as THREE from 'three'
 import Atom from './Atom.js'
 import fs from 'fs'
+import { findAngle } from './Math.js'
 export default class Molecule {
   constructor (scene) {
     this.scene = scene
     this.atoms = []
-    this.materials = []
-    this.geometries = []
     this.k = 0.4
     this.ColorAtoms = {}
     this.ticks = []
   }
   // Создание модели молекулы в 3d, переделать по отдельным атомам
   creatModel () {
-    this.materials = []
-    this.geometries = []
-    for (let Name in this.ColorAtoms) {
-      let material = new THREE.MeshPhongMaterial({
-        color: this.ColorAtoms[Name][1],
-        specular: 0x00b2fc,
-        shininess: 12,
-        blending: THREE.NormalBlending,
-        depthTest: true
-      })
-      this.materials.push(material)
-      let geometry = new THREE.SphereGeometry(this.ColorAtoms[Name][2] * this.k, 10, 10) // геометрия сферы
-      this.geometries.push(geometry)
-    }
     for (let i = 0; i < this.atoms.length; i++) {
-      let Name = this.atoms[i].name // номер элемента
       let mat = new THREE.MeshPhongMaterial({
-        color: this.ColorAtoms[Name][1],
+        color: this.ColorAtoms[this.atoms[i].name][1],
         specular: 0x00b2fc,
-        shininess: 12,
+        shininess: 0,
         blending: THREE.NormalBlending,
         depthTest: true
       })
-      this.atoms[i].Object3D = new THREE.Mesh(this.geometries[this.ColorAtoms[Name][0]], mat)
+      let geometry = new THREE.SphereGeometry(this.ColorAtoms[this.atoms[i].name][2] * this.k, 10, 10) // геометрия сферы
+      this.atoms[i].Object3D = new THREE.Mesh(geometry, mat)
       this.atoms[i].Object3D.name = this.atoms[i].name
       this.atoms[i].Object3D.position.set(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
       this.atoms[i].Object3D.userData['AtomPosition'] = new THREE.Vector3(this.atoms[i].x, this.atoms[i].y, this.atoms[i].z)
@@ -124,7 +109,6 @@ export default class Molecule {
         }
       }
     }
-
     let allAtomSymbol = ''
     let number = 0
     for (let i = 0; i < this.atoms.length; i++) {
@@ -141,35 +125,8 @@ export default class Molecule {
   }
   // Парсер файла. Переделать под наш
   fileGetContents (url) {
-    // console.log(typeof req.responseText)
     return fs.readFileSync(url, 'utf-8')
   }
-  // Переписать функцию удаления атома
-  // deleteAtom (number) {
-  //   let indexAtom = null
-  //   this.atoms.forEach(function (d, index) {
-  //     if (Number(d.number) === Number(number)) {
-  //       indexAtom = index
-  //     }
-  //   })
-  //   if (indexAtom) {
-  //     this.atoms.splice(indexAtom, 1)
-  //     let self = this
-  //     this.atoms.forEach(function (atom, index) {
-  //       // console.log(index)
-  //       atom.connections.forEach(function (con, indexCon) {
-  //         if (Number(con) === number) {
-  //           self.atoms[index].connections.splice(indexCon, 1)
-  //           // console.log(self.atoms)
-  //         }
-  //       })
-  //     })
-  //     // console.log(self.atoms)
-  //     this.renderer = true
-  //   } else {
-  //     alert('Данного атома не существует')
-  //   }
-  // }
   tick (intersects) {
     let self = this
     this.scene.children.forEach(function (atom) {
@@ -205,7 +162,6 @@ export default class Molecule {
             cycle.material.color.set(0xff0000)
           })
           document.getElementById('InfoForAtom').textContent = intersects.object.userData.AtomNumber + ' ' + intersects.object.userData.AtomName + ': ' + intersects.object.userData.AtomPosition.x + ' ' + intersects.object.userData.AtomPosition.y + ' ' + intersects.object.userData.AtomPosition.z
-          // alert(intersects[ 0 ].object.userData.AtomNumber + " " + intersects[ 0 ].object.userData.AtomName + ": " + intersects[ 0 ].object.userData.AtomPosition.x + " " + intersects[ 0 ].object.userData.AtomPosition.y + " " + intersects[ 0 ].object.userData.AtomPosition.z + " ")
           this.ticks.push(intersects.object.userData['AtomNumber'])
         } else {
           intersects.object.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']][1])
@@ -216,6 +172,21 @@ export default class Molecule {
           let num = this.ticks.indexOf(intersects.object.userData['AtomNumber'])
           this.ticks.splice(num, 1)
         }
+      }
+    }
+    if (this.ticks.length === 3) {
+      let angle = findAngle(this.getAtom(this.ticks[0]), this.getAtom(this.ticks[1]), this.getAtom(this.ticks[2])) * 57.6
+      if (angle > 180) {
+        angle = 360 - angle
+      }
+      document.getElementById('InfoForAtom').textContent = angle + 'градусов'
+    }
+  }
+  getAtom (num) {
+    for (let i = 0; i < this.atoms.length; i++) {
+      if (Number(num) === Number(this.atoms[i].number)) {
+        console.log(this.atoms[i].Object3D.position)
+        return this.atoms[i].Object3D.position
       }
     }
   }
