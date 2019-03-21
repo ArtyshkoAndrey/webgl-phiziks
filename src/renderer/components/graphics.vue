@@ -1,10 +1,9 @@
 <template lang="pug">
   div
-    canvas#gl(style='margin-left: 100px')
-    div(style='width: 100px; height: 100%; position: absolute; z-index: 100; background: white; top: 0; left: 0')
-      .row
-        .col-12
-          p#InfoForAtom
+    div#infoMouse.text-white.p-2(style='z-index:3 ;position:absolute; display:none; top:0; left:0; background-color: rgba(0, 0, 0, 0.5)')
+    canvas#gl(style='margin-left: 100px; z-index: 1')
+    div(style='width: 100px; height: 100%; position: absolute; z-index: 2; background: white; top: 0; left: 0')
+      p#InfoForAtom
 </template>
 
 <script>
@@ -36,8 +35,11 @@
         this.molecule.creatModel()
         this.gl.initMolecule(this.molecule)
         this.gl.render()
-        document.getElementById('gl').addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
+        let glCanvas = document.getElementById('gl')
+        glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
         window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
+
+        glCanvas.addEventListener('mousemove', this.gl.getInfo.bind(this.gl.retThis()))
       })
     }
   }
