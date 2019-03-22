@@ -94,7 +94,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   html, body {
     overflow: hidden;
   }

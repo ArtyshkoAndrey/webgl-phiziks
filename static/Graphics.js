@@ -16,7 +16,7 @@ export default class Graphics {
   init (domCanvas) {
     this.canvas = domCanvas
     this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: this.canvas})
-    this.renderer.setClearColor(0xa4a4a4)
+    this.renderer.setClearColor(0x1E1E1E)
     this.renderer.setSize(window.innerWidth - 100, window.innerHeight)
     this.camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 100) / window.innerHeight, 1, 500)
     this.camera.position.set(10, 10, 10)
