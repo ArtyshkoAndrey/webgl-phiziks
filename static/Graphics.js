@@ -12,7 +12,7 @@ export default class Graphics {
     this.canvas = null
     this.molecule = null
   }
-
+  // Инициализация канваса и всё для 3D
   init (domCanvas) {
     this.canvas = domCanvas
     this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: this.canvas})
@@ -38,10 +38,12 @@ export default class Graphics {
     this.control.update()
     this.renderer.render(this.scene, this.camera)
   }
+  // Создание свойства молекулы
   initMolecule (molecule) {
     this.molecule = molecule
     console.log(this.molecule)
   }
+  // Функция рекрсивная для отображение 3D
   render () {
     this.control.update()
     if (this.camera.position.x !== this.pos.position.x) {
@@ -51,6 +53,7 @@ export default class Graphics {
     this.light.position.copy(this.camera.position)
     requestAnimationFrame(this.render.bind(this))
   }
+  // Выделение атома при клике
   raycast (event) {
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
@@ -65,24 +68,28 @@ export default class Graphics {
           console.log(intersects[0].object)
         }
       } else {
-        if (intersects[1].object instanceof THREE.Mesh) {
-          if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
-            this.molecule.tick(intersects[1])
-            console.log(intersects[1].object)
+        if (typeof intersects[1] === 'object') {
+          if (intersects[1].object instanceof THREE.Mesh) {
+            if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
+              this.molecule.tick(intersects[1])
+              console.log(intersects[1].object)
+            }
           }
         }
       }
     }
     this.renderer.render(this.scene, this.camera)
   }
+  // Изменение размера канваса при изменении окна
   resizeWindow () {
     this.camera.aspect = (window.innerWidth - 100) / window.innerHeight
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(window.innerWidth - 100, window.innerHeight)
     this.renderer.render(this.scene, this.camera)
   }
+  // Вывод инфы при наведении на атом
   getInfo (event) {
-    console.log(event)
+    // console.log(event)
     let div = document.getElementById('infoMouse')
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
@@ -93,7 +100,7 @@ export default class Graphics {
     if (intersects.length > 0) {
       if (intersects[0].object.type !== 'LineSegments') {
         if (intersects[0].object.geometry instanceof THREE.SphereGeometry) {
-          console.log(intersects[0].object)
+          // console.log(intersects[0].object)
           div.style.top = event.clientY + 10 + 'px'
           div.style.left = event.clientX + 10 + 'px'
           div.style.display = 'block'
@@ -102,13 +109,18 @@ export default class Graphics {
           div.style.display = 'none'
         }
       } else {
-        if (intersects[1].object instanceof THREE.Mesh) {
-          if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
-            console.log(intersects[1].object)
-            div.style.top = event.clientY + 10 + 'px'
-            div.style.left = event.clientX + 10 + 'px'
-            div.style.display = 'block'
-            div.textContent = intersects[1].object.userData['AtomName']
+        console.log(typeof intersects[1])
+        if (typeof intersects[1] === 'object') {
+          if (intersects[1].object instanceof THREE.Mesh) {
+            if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
+              // console.log(intersects[1].object)
+              div.style.top = event.clientY + 10 + 'px'
+              div.style.left = event.clientX + 10 + 'px'
+              div.style.display = 'block'
+              div.textContent = intersects[1].object.userData['AtomName']
+            } else {
+              div.style.display = 'none'
+            }
           } else {
             div.style.display = 'none'
           }

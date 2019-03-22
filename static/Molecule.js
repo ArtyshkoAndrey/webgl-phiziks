@@ -185,7 +185,7 @@ export default class Molecule {
   getAtom (num) {
     for (let i = 0; i < this.atoms.length; i++) {
       if (Number(num) === Number(this.atoms[i].number)) {
-        console.log(this.atoms[i].Object3D.position)
+        // console.log(this.atoms[i].Object3D.position)
         return this.atoms[i].Object3D.position
       }
     }
