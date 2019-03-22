@@ -83,18 +83,12 @@
     methods: {
       // Исправил баг, перерисовка соединения по новому положению
       changePosition (evt) {
-        let x = evt.target.elements.x.value
-        let y = evt.target.elements.y.value
-        let z = evt.target.elements.z.value
-        for (let i = 0; i < this.molecule.atoms.length; i++) {
-          if (Number(this.molecule.atoms[i].number) === Number(this.molecule.ticks[0])) {
-            this.molecule.atoms[i].x = Number(x)
-            this.molecule.atoms[i].y = Number(y)
-            this.molecule.atoms[i].z = Number(z)
-            this.molecule.atoms[i].Object3D.position.set(Number(x), Number(y), Number(z))
-            this.gl.renderer.render(this.gl.scene, this.gl.camera)
-          }
-        }
+        let x = Number(evt.target.elements.x.value)
+        let y = Number(evt.target.elements.y.value)
+        let z = Number(evt.target.elements.z.value)
+        this.molecule.changePosition(Number(this.molecule.ticks[0]), {x: x, y: y, z: z})
+        this.molecule.ticks = []
+        this.gl.renderer.render(this.gl.scene, this.gl.camera)
       }
     }
   }

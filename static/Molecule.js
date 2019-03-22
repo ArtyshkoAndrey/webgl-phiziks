@@ -33,14 +33,8 @@ export default class Molecule {
     }
     // связи
     for (let i = 0; i < this.atoms.length; i++) {
-      let num = this.atoms[i].number // номер атома
-      let tempAtom = null
+      let tempAtom = this.atoms[i]
       let self = this
-      this.atoms.forEach(function (d, index) {
-        if (Number(num) === Number(d.number)) {
-          tempAtom = self.atoms[index]
-        }
-      })
       let x1 = parseFloat(tempAtom.x)
       let y1 = parseFloat(tempAtom.y)
       let z1 = parseFloat(tempAtom.z)
@@ -187,6 +181,67 @@ export default class Molecule {
       if (Number(num) === Number(this.atoms[i].number)) {
         // console.log(this.atoms[i].Object3D.position)
         return this.atoms[i].Object3D.position
+      }
+    }
+  }
+  changePosition (numAtom, position) {
+    let glavAtom = null
+    let chAtom = null
+    for (let i = 0; i < this.atoms.length; i++) {
+      if (Number(this.atoms[i].number) === numAtom) {
+        glavAtom = this.atoms[i]
+      }
+    }
+    glavAtom.x = Number(position.x)
+    glavAtom.y = Number(position.y)
+    glavAtom.z = Number(position.z)
+    glavAtom.Object3D.position.set(Number(position.x), Number(position.y), Number(position.z))
+    // console.log(glavAtom.Object3D)
+    glavAtom.Object3D.children = []
+    for (let j = 0; j < glavAtom.connections.length; j++) {
+      let num = Number(glavAtom.connections[j])
+      for (let k = 0; k < this.atoms.length; k++) {
+        if (num === this.atoms[k].number) {
+          chAtom = this.atoms[k]
+        }
+      }
+      chAtom.Object3D.children = []
+      let x2 = (parseFloat(chAtom.x) + glavAtom.x) / 2
+      let y2 = (parseFloat(chAtom.y) + glavAtom.y) / 2
+      let z2 = (parseFloat(chAtom.z) + glavAtom.z) / 2
+      let fingerLength = this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - glavAtom.x, y2 - glavAtom.y, z2 - glavAtom.z))
+      let mat = new THREE.MeshPhongMaterial({
+        color: this.ColorAtoms[glavAtom.name][1],
+        specular: 0x00b2fc,
+        shininess: 12,
+        blending: THREE.NormalBlending,
+        depthTest: true
+      })
+      // console.log(mat)
+      fingerLength.material = mat
+      glavAtom.Object3D.add(fingerLength)
+      for (let f = 0; f < chAtom.connections.length; f++) {
+        let ch2Atom = null
+        let num2 = Number(chAtom.connections[f])
+        for (let k = 0; k < this.atoms.length; k++) {
+          if (Number(num2) === Number(this.atoms[k].number)) {
+            ch2Atom = this.atoms[k]
+          }
+        }
+        let x3 = (parseFloat(Number(ch2Atom.x)) + Number(chAtom.x)) / 2
+        let y3 = (parseFloat(Number(ch2Atom.y)) + Number(chAtom.y)) / 2
+        let z3 = (parseFloat(Number(ch2Atom.z)) + Number(chAtom.z)) / 2
+        let fingerLength = this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x3 - chAtom.x, y3 - chAtom.y, z3 - chAtom.z))
+        let mat = new THREE.MeshPhongMaterial({
+          color: this.ColorAtoms[chAtom.name][1],
+          specular: 0x00b2fc,
+          shininess: 12,
+          blending: THREE.NormalBlending,
+          depthTest: true
+        })
+        // console.log(mat)
+        fingerLength.material = mat
+        chAtom.Object3D.add(fingerLength)
       }
     }
   }

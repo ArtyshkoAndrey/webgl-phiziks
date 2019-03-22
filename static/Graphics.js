@@ -65,14 +65,14 @@ export default class Graphics {
       if (intersects[0].object.type !== 'LineSegments') {
         if (intersects[0].object.geometry instanceof THREE.SphereGeometry) {
           this.molecule.tick(intersects[0])
-          console.log(intersects[0].object)
+          // console.log(intersects[0].object)
         }
       } else {
         if (typeof intersects[1] === 'object') {
           if (intersects[1].object instanceof THREE.Mesh) {
             if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
               this.molecule.tick(intersects[1])
-              console.log(intersects[1].object)
+              // console.log(intersects[1].object)
             }
           }
         }
@@ -109,7 +109,7 @@ export default class Graphics {
           div.style.display = 'none'
         }
       } else {
-        console.log(typeof intersects[1])
+        // console.log(typeof intersects[1])
         if (typeof intersects[1] === 'object') {
           if (intersects[1].object instanceof THREE.Mesh) {
             if (intersects[1].object.geometry instanceof THREE.SphereGeometry) {
