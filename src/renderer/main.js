@@ -14,6 +14,8 @@ window.jQuery = window.$ = require('jquery/dist/jquery.min')
 import PopperJs from 'popper.js/dist/umd/popper.js';
 import 'bootstrap/dist/js/bootstrap.min'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './assets/style/standart.scss'
+import './assets/style/light.scss'
 /* eslint-enable */
 
 /* eslint-disable no-new */

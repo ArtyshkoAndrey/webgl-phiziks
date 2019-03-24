@@ -2,7 +2,7 @@
 import * as THREE from 'three'
 import OrbitControls from 'three-orbitcontrols'
 export default class Graphics {
-  constructor () {
+  constructor (bgColorBool) {
     this.scene = null
     this.camera = null
     this.renderer = null
@@ -11,14 +11,20 @@ export default class Graphics {
     this.pos = null
     this.canvas = null
     this.molecule = null
+    this.bgColorBool = bgColorBool
+    this.requestA = null
   }
   // Инициализация канваса и всё для 3D
   init (domCanvas) {
     this.canvas = domCanvas
     this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: this.canvas})
-    this.renderer.setClearColor(0x1E1E1E)
-    this.renderer.setSize(window.innerWidth - 100, window.innerHeight)
-    this.camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 100) / window.innerHeight, 1, 500)
+    if (this.bgColorBool) {
+      this.renderer.setClearColor(0xE6E6E6)
+    } else {
+      this.renderer.setClearColor(0x1E1E1E)
+    }
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500)
     this.camera.position.set(10, 10, 10)
     this.control = new OrbitControls(this.camera, this.renderer.domElement)
     this.control.enableDamping = false
@@ -51,13 +57,13 @@ export default class Graphics {
     }
     this.pos = this.camera.clone()
     this.light.position.copy(this.camera.position)
-    requestAnimationFrame(this.render.bind(this))
+    this.requestA = requestAnimationFrame(this.render.bind(this))
   }
   // Выделение атома при клике
   raycast (event) {
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
-    vector.set(((event.clientX - 100) / this.canvas.width) * 2 - 1, -(event.clientY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
+    vector.set(((event.clientX) / this.canvas.width) * 2 - 1, -(event.clientY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
     vector.unproject(this.camera)
     raycaster.set(this.camera.position, vector.sub(this.camera.position).normalize())
     let intersects = raycaster.intersectObjects(this.scene.children, true)
@@ -82,9 +88,9 @@ export default class Graphics {
   }
   // Изменение размера канваса при изменении окна
   resizeWindow () {
-    this.camera.aspect = (window.innerWidth - 100) / window.innerHeight
+    this.camera.aspect = window.innerWidth / window.innerHeight
     this.camera.updateProjectionMatrix()
-    this.renderer.setSize(window.innerWidth - 100, window.innerHeight)
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.render(this.scene, this.camera)
   }
   // Вывод инфы при наведении на атом
@@ -93,7 +99,7 @@ export default class Graphics {
     let div = document.getElementById('infoMouse')
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
-    vector.set(((event.clientX - 100) / this.canvas.width) * 2 - 1, -(event.clientY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
+    vector.set((event.clientX / this.canvas.width) * 2 - 1, -(event.clientY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
     vector.unproject(this.camera)
     raycaster.set(this.camera.position, vector.sub(this.camera.position).normalize())
     let intersects = raycaster.intersectObjects(this.scene.children, true)
@@ -131,9 +137,29 @@ export default class Graphics {
     } else {
       div.style.display = 'none'
     }
-    // this.renderer.render(this.scene, this.camera)
   }
   retThis () {
     return this
+  }
+  destuctor () {
+    cancelAnimationFrame(this.requestA)
+    let self = this
+    this.molecule.atoms.forEach(function (atom) {
+      self.scene.remove(atom.Object3D)
+    })
+    this.requestA = undefined
+    this.pos = undefined
+    this.scene = undefined
+    this.control = undefined
+    this.camera = undefined
+    this.light = undefined
+    this.renderer.forceContextLoss()
+    this.renderer.context = null
+    this.renderer.domElement = null
+    this.renderer = null
+    this.render = undefined
+    this.canvas = undefined
+    this.molecule = undefined
+    this.bgColorBool = undefined
   }
 }

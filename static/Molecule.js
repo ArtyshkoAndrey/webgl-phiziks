@@ -173,7 +173,7 @@ export default class Molecule {
       if (angle > 180) {
         angle = 360 - angle
       }
-      document.getElementById('InfoForAtom').textContent = angle + 'градусов'
+      document.getElementById('InfoForAtom').textContent = Math.round(angle) + ' градусов'
     }
   }
   getAtom (num) {
@@ -244,5 +244,11 @@ export default class Molecule {
         chAtom.Object3D.add(fingerLength)
       }
     }
+  }
+  destuctor () {
+    this.scene = undefined
+    this.atoms = undefined
+    this.ColorAtoms = undefined
+    this.ticks = undefined
   }
 }

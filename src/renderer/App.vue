@@ -43,6 +43,5 @@
 </script>
 
 <style lang='scss'>
-  @import 'assets/style/standart.scss';
-  @import 'assets/style/light.scss';
+
 </style>

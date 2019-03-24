@@ -10,4 +10,13 @@ body.light {
       color: black;
     }
   }
+
+  .left-side-info {
+    border: 0 !important;
+    background-color: white !important;
+    color: black;
+    p, h1, h2, h3, h4, h5, h6, label, span {
+      color: black;
+    }
+  }
 }
