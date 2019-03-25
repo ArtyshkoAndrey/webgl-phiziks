@@ -21,5 +21,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+## Last Fixed
+### 25.03.19
+Полностью исправлена утечка памяти при удалении сцены
+Убран скрол - выставлен автоматически
+
 ## License
 [GNU](https://choosealicense.com/licenses/lgpl-3.0/)
