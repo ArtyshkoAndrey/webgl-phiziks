@@ -246,9 +246,14 @@ export default class Molecule {
     }
   }
   destuctor () {
-    this.scene = undefined
-    this.atoms = undefined
-    this.ColorAtoms = undefined
-    this.ticks = undefined
+    for (let i = 0; i < this.atoms.length; i++) {
+      this.atoms[i].Object3D.material.dispose()
+      this.atoms[i].Object3D.geometry.dispose()
+      this.atoms[i] = null
+      console.log(this.atoms.length)
+    }
+    this.atoms = null
+    this.ColorAtoms = null
+    this.ticks = null
   }
 }

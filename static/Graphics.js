@@ -147,19 +147,21 @@ export default class Graphics {
     this.molecule.atoms.forEach(function (atom) {
       self.scene.remove(atom.Object3D)
     })
-    this.requestA = undefined
-    this.pos = undefined
-    this.scene = undefined
-    this.control = undefined
-    this.camera = undefined
-    this.light = undefined
+    this.scene.remove(this.light)
+    this.scene.remove(this.camera)
+    this.renderer.dispose()
+    this.scene.dispose()
+    this.requestA = null
+    this.pos = null
+    this.scene = null
+    this.control = null
+    this.camera = null
+    this.light = null
     this.renderer.forceContextLoss()
     this.renderer.context = null
     this.renderer.domElement = null
-    this.renderer = null
-    this.render = undefined
-    this.canvas = undefined
-    this.molecule = undefined
-    this.bgColorBool = undefined
+    this.canvas = null
+    this.molecule = null
+    this.bgColorBool = null
   }
 }
