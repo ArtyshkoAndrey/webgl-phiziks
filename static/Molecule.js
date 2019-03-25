@@ -84,22 +84,18 @@ export default class Molecule {
   }
   // Создание Атомов по парсеру файла
   finderAtoms (url) {
-    let sssr = this.fileGetContents(url)
-    let info = sssr.split('\n')
-    if (info[info.length - 1].length < 1) {
-      info.pop()
-    }
+    let info = this.fileGetContents(url)
     // переводим info в массив вида [ [ 1, C, -0.231579, -0.350841, -0.037475, 1, 2, 4, 5, 6 ], [2, C, 0.229441...] ... ]
-    for (let i = 1; i < info.length; i++) {
-      this.atoms[i - 1] = new Atom()
-      this.atoms[i - 1].x = info[i].match(/\S+/g)[2]
-      this.atoms[i - 1].y = info[i].match(/\S+/g)[3]
-      this.atoms[i - 1].z = info[i].match(/\S+/g)[4]
-      this.atoms[i - 1].name = info[i].match(/\S+/g)[1]
-      this.atoms[i - 1].number = Number(info[i].match(/\S+/g)[0])
-      if (info[i].match(/\S+/g).length > 4) {
-        for (let j = 6; j < info[i].match(/\S+/g).length; j++) {
-          this.atoms[i - 1].connections.push(info[i].match(/\S+/g)[j])
+    for (let i = 0; i < info.length; i++) {
+      this.atoms[i] = new Atom()
+      this.atoms[i].x = info[i][2]
+      this.atoms[i].y = info[i][3]
+      this.atoms[i].z = info[i][4]
+      this.atoms[i].name = info[i][1]
+      this.atoms[i].number = Number(info[i][0])
+      if (info[i].length > 5) {
+        for (let j = 6; j < info[i].length; j++) {
+          this.atoms[i].connections.push(info[i][j])
         }
       }
     }
@@ -119,7 +115,40 @@ export default class Molecule {
   }
   // Парсер файла. Переделать под наш
   fileGetContents (url) {
-    return fs.readFileSync(url, 'utf-8')
+    let txt = fs.readFileSync(url, 'utf-8')
+    let arr = txt.split('\n')
+    let fix = []
+    let fat = []
+    let b = false
+    for (let i = 0; i < arr.length; i++) {
+      fix[i] = []
+      for (let j = 0; j < arr[i].split(' ').length; j++) {
+        if (arr[i].split(' ')[j] !== '') {
+          fix[i].push(arr[i].split(' ')[j])
+        }
+      }
+    }
+    for (let i = 0; i < fix.length; i++) {
+      if (b && fix[i].length >= 2) {
+        console.log(b)
+        if (fix[i][0] !== '') {
+          fat.push(fix[i])
+          if (fix[i + 1].length === 1) {
+            // if (fix[i + 1][0] === '') {
+            b = false
+            console.log('stop')
+            // }
+          }
+        }
+      }
+      if ((fix[i][0] + ' ' + fix[i][1]) === 'CARTESIAN COORDINATES') {
+        b = true
+        i += 4
+        fat.push(fix[i])
+      }
+    }
+    console.log(fat)
+    return fat
   }
   tick (intersects) {
     let self = this

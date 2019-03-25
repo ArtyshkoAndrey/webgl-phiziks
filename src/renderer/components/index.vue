@@ -2,7 +2,7 @@
   .container
     .row
       .col-md-4.col-sm-6.col-12
-        input#openfile(type='file' accept='.txt' style='display: none')
+        input#openfile(type='file' accept='.out' style='display: none')
         .wrapper.mt-5
           h2 Start
           p
