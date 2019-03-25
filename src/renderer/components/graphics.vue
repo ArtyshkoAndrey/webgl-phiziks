@@ -115,8 +115,8 @@
       goToHome () {
         this.gl.destuctor()
         this.molecule.destuctor()
-        this.gl = undefined
-        this.molecule = undefined
+        this.gl = null
+        this.molecule = null
         delete this.gl
         delete this.molecule
         this.$router.push('index')

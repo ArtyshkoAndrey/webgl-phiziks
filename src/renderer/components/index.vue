@@ -27,20 +27,6 @@
             button.text-primary(data-toggle="modal" data-target="#theme") Color Theme
           p
             a(href="#") Settings
-      .col-md-8.offset-md-2.col-12.text-center.mt-5
-        h2 ScreenShot
-        #carouselExampleControls.carousel.slide(data-ride="carousel")
-          .carousel-inner
-            .carousel-item.active
-              img.img-thumbnail(src='./../../../static/img/1.png')
-            .carousel-item
-              img.img-thumbnail(src='./../../../static/img/2.png')
-          a.carousel-control-prev(href="#carouselExampleControls" role="button" data-slide="prev")
-            span.carousel-control-prev-icon(aria-hidden="true")
-            span.sr-only Previous
-          a.carousel-control-next(href="#carouselExampleControls" role="button" data-slide="next")
-            span.carousel-control-next-icon(aria-hidden="true")
-            span.sr-only Next
     themeModal
 </template>
 
