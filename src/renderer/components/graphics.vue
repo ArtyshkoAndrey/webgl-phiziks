@@ -36,7 +36,7 @@
           <div class="form-group row m-0 p-0 mt-2">
             <div class="col-12">
               <input type="submit" class="btn btn-primary w-100" value="Применить">
-            </div> 
+            </div>
           </div>
         </form>
       </transition>
@@ -72,7 +72,7 @@
         this.molecule = new Molecule(this.gl.scene)
         this.molecule.finderAtoms(this.$parent.path)
         this.molecule.creatModel()
-        this.gl.initMolecule(this.molecule)
+        this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
         this.gl.render()
         let glCanvas = document.getElementById('gl')
         glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
