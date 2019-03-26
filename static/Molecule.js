@@ -40,6 +40,14 @@ export default class Molecule {
       let x1 = parseFloat(tempAtom.x)
       let y1 = parseFloat(tempAtom.y)
       let z1 = parseFloat(tempAtom.z)
+      for (let j = 0; j < this.atoms.length; j++) {
+        if (i !== j) {
+          console.log(this.get3dDistance(this.atoms[i].Object3D.position, this.atoms[j].Object3D.position))
+          if (this.get3dDistance(this.atoms[i].Object3D.position, this.atoms[j].Object3D.position) < 1.5) {
+            this.atoms[i].connections.push(Number(this.atoms[j].number))
+          }
+        }
+      }
       if (this.atoms[i].connections.length > 0) {
         for (let j = 0; j < this.atoms[i].connections.length; j++) {
           let num = this.atoms[i].connections[j] // номер атома
@@ -69,18 +77,13 @@ export default class Molecule {
   }
   // Рисование соединения цилиндрами
   cylinderMesh (pointX, pointY) {
-    // edge from X to Y
     let direction = new THREE.Vector3().subVectors(pointY, pointX)
     let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
-
-    // cylinder: radiusAtTop, radiusAtBottom, height, segmentsAroundRadius, segmentsAlongHeight
     let edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
-
     let edgeMesh = new THREE.Mesh(edgeGeometry, new THREE.MeshBasicMaterial({
       color: 0x0000ff
     }))
     edgeMesh.position.copy(new THREE.Vector3().addVectors(pointX, direction.multiplyScalar(0.5)))
-
     edgeMesh.setRotationFromEuler(arrow.rotation)
     return edgeMesh
   }
@@ -153,26 +156,27 @@ export default class Molecule {
     return fat
   }
   tick (intersects) {
-    let self = this
-    this.scene.children.forEach(function (atom) {
-      if (atom instanceof THREE.Mesh) {
-        if (atom.geometry instanceof THREE.SphereGeometry) {
-          let scope = self
-          let ticked = false
-          for (let i = 0; i < self.ticks.length; i++) {
-            if (Number(self.ticks[i]) === Number(atom.userData['AtomNumber'])) {
-              ticked = true
-            }
-          }
-          if (ticked === false) {
-            atom.material.color.set(self.ColorAtoms[atom.name][1])
-            atom.children.forEach(function (cycle) {
-              cycle.material.color.set(scope.ColorAtoms[atom.name][1])
-            })
-          }
-        }
-      }
-    })
+    // WTF
+    // let self = this
+    // this.ObjectMolecule.children.forEach(function (atom) {
+    //   if (atom instanceof THREE.Mesh) {
+    //     if (atom.geometry instanceof THREE.SphereGeometry) {
+    //       let scope = self
+    //       let ticked = false
+    //       for (let i = 0; i < self.ticks.length; i++) {
+    //         if (Number(self.ticks[i]) === Number(atom.userData['AtomNumber'])) {
+    //           ticked = true
+    //         }
+    //       }
+    //       if (ticked === false) {
+    //         atom.material.color.set(self.ColorAtoms[atom.name][1])
+    //         atom.children.forEach(function (cycle) {
+    //           cycle.material.color.set(scope.ColorAtoms[atom.name][1])
+    //         })
+    //       }
+    //     }
+    //   }
+    // })
     if (intersects.object instanceof THREE.Mesh) {
       if (intersects.object.geometry instanceof THREE.SphereGeometry) {
         let ticked = false
@@ -199,15 +203,19 @@ export default class Molecule {
         }
       }
     }
+    if (this.ticks.length === 2) {
+      let distance = this.get3dDistance(this.getAtomPosition(this.ticks[0]), this.getAtomPosition(this.ticks[1]))
+      document.getElementById('InfoForAtom').textContent = distance.toFixed(2) + ' пкм'
+    }
     if (this.ticks.length === 3) {
-      let angle = findAngle(this.getAtom(this.ticks[0]), this.getAtom(this.ticks[1]), this.getAtom(this.ticks[2])) * 57.6
+      let angle = findAngle(this.getAtomPosition(this.ticks[0]), this.getAtomPosition(this.ticks[1]), this.getAtomPosition(this.ticks[2])) * 57.6
       if (angle > 180) {
         angle = 360 - angle
       }
-      document.getElementById('InfoForAtom').textContent = Math.round(angle) + ' градусов'
+      document.getElementById('InfoForAtom').textContent = angle.toFixed(2) + ' градусов'
     }
   }
-  getAtom (num) {
+  getAtomPosition (num) {
     for (let i = 0; i < this.atoms.length; i++) {
       if (Number(num) === Number(this.atoms[i].number)) {
         // console.log(this.atoms[i].Object3D.position)
@@ -248,7 +256,6 @@ export default class Molecule {
         blending: THREE.NormalBlending,
         depthTest: true
       })
-      // console.log(mat)
       fingerLength.material = mat
       glavAtom.Object3D.add(fingerLength)
       for (let f = 0; f < chAtom.connections.length; f++) {
@@ -286,5 +293,11 @@ export default class Molecule {
     this.atoms = null
     this.ColorAtoms = null
     this.ticks = null
+  }
+  get3dDistance (startCoords, endCoords) {
+    let dx = Math.pow((startCoords.x - endCoords.x), 2)
+    let dy = Math.pow((startCoords.y - endCoords.y), 2)
+    let dz = Math.pow((startCoords.z - endCoords.z), 2)
+    return Math.sqrt(dx + dy + dz)
   }
 }
