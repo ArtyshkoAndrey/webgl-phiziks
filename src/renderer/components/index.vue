@@ -1,5 +1,5 @@
 <template lang="pug">
-  .container
+  .container(style="position: relative")
     .row
       .col-md-4.col-sm-6.col-12
         input#openfile(type='file' accept='.out' style='display: none')
