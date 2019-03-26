@@ -10,9 +10,11 @@ export default class Molecule {
     this.k = 0.4
     this.ColorAtoms = {}
     this.ticks = []
+    this.ObjectMolecule = new THREE.Object3D()
   }
   // Создание модели молекулы в 3d, переделать по отдельным атомам
   creatModel () {
+    this.scene.add(this.ObjectMolecule)
     for (let i = 0; i < this.atoms.length; i++) {
       let mat = new THREE.MeshPhongMaterial({
         color: this.ColorAtoms[this.atoms[i].name][1],
@@ -29,7 +31,7 @@ export default class Molecule {
       this.atoms[i].Object3D.userData['AtomNumber'] = this.atoms[i].number
       this.atoms[i].Object3D.userData['AtomName'] = this.atoms[i].name
       this.atoms[i].Object3D.userData['AtomConnections'] = this.atoms[i].connections
-      this.scene.add(this.atoms[i].Object3D)
+      this.ObjectMolecule.add(this.atoms[i].Object3D)
     }
     // связи
     for (let i = 0; i < this.atoms.length; i++) {

@@ -15,6 +15,7 @@ export default class Graphics {
     this.requestA = null
     this.localToCameraAxesPlacement = null
     this.axesHelper = null
+    this.ObjectMolecule = null
   }
   // Инициализация канваса и всё для 3D
   init (domCanvas) {
@@ -55,8 +56,9 @@ export default class Graphics {
     this.renderer.render(this.scene, this.camera)
   }
   // Создание свойства молекулы
-  initMolecule (molecule) {
+  initMolecule (molecule, ObjectMolecule) {
     this.molecule = molecule
+    this.ObjectMolecule = ObjectMolecule
     console.log(this.molecule)
   }
   // Функция рекрсивная для отображение 3D
