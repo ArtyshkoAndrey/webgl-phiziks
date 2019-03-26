@@ -42,7 +42,6 @@ export default class Molecule {
       let z1 = parseFloat(tempAtom.z)
       for (let j = 0; j < this.atoms.length; j++) {
         if (i !== j) {
-          console.log(this.get3dDistance(this.atoms[i].Object3D.position, this.atoms[j].Object3D.position))
           if (this.get3dDistance(this.atoms[i].Object3D.position, this.atoms[j].Object3D.position) < 1.5) {
             this.atoms[i].connections.push(Number(this.atoms[j].number))
           }
@@ -70,16 +69,20 @@ export default class Molecule {
           })
           // console.log(mat)
           fingerLength.material = mat
+          fingerLength.userData['to'] = tempAtom.number
           this.atoms[i].Object3D.add(fingerLength)
         }
       }
     }
   }
   // Рисование соединения цилиндрами
-  cylinderMesh (pointX, pointY) {
+  cylinderMesh (pointX, pointY, returned = 'all') {
     let direction = new THREE.Vector3().subVectors(pointY, pointX)
     let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
     let edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
+    if (returned === 'geometry') {
+      return edgeGeometry
+    }
     let edgeMesh = new THREE.Mesh(edgeGeometry, new THREE.MeshBasicMaterial({
       color: 0x0000ff
     }))
@@ -215,17 +218,9 @@ export default class Molecule {
       document.getElementById('InfoForAtom').textContent = angle.toFixed(2) + ' градусов'
     }
   }
-  getAtomPosition (num) {
-    for (let i = 0; i < this.atoms.length; i++) {
-      if (Number(num) === Number(this.atoms[i].number)) {
-        // console.log(this.atoms[i].Object3D.position)
-        return this.atoms[i].Object3D.position
-      }
-    }
-  }
   changePosition (numAtom, position) {
     let glavAtom = null
-    let chAtom = null
+    let massEdgeTo = []
     for (let i = 0; i < this.atoms.length; i++) {
       if (Number(this.atoms[i].number) === numAtom) {
         glavAtom = this.atoms[i]
@@ -235,52 +230,39 @@ export default class Molecule {
     glavAtom.y = Number(position.y)
     glavAtom.z = Number(position.z)
     glavAtom.Object3D.position.set(Number(position.x), Number(position.y), Number(position.z))
-    // console.log(glavAtom.Object3D)
-    glavAtom.Object3D.children = []
-    for (let j = 0; j < glavAtom.connections.length; j++) {
-      let num = Number(glavAtom.connections[j])
-      for (let k = 0; k < this.atoms.length; k++) {
-        if (num === this.atoms[k].number) {
-          chAtom = this.atoms[k]
+    let self = this
+    glavAtom.Object3D.material.color.set(this.ColorAtoms[glavAtom.name][1])
+    glavAtom.Object3D.children.forEach(function (edge) {
+      massEdgeTo.push(edge.userData['to'])
+      let tempAtomPosition = self.getAtomPosition(edge.userData['to'])
+      let x = ((Number(tempAtomPosition.x) + Number(position.x)) / 2) - Number(position.x)
+      let y = ((Number(tempAtomPosition.y) + Number(position.y)) / 2) - Number(position.y)
+      let z = ((Number(tempAtomPosition.z) + Number(position.z)) / 2) - Number(position.z)
+      let pointX = new THREE.Vector3(0, 0, 0)
+      let pointY = new THREE.Vector3(x, y, z)
+      let direction = new THREE.Vector3().subVectors(pointY, pointX)
+      let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
+      edge.geometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
+      edge.position.copy(new THREE.Vector3().addVectors(pointX, direction.multiplyScalar(0.5)))
+      edge.setRotationFromEuler(arrow.rotation)
+      edge.material.color.set(self.ColorAtoms[glavAtom.name][1])
+    })
+    while (massEdgeTo.length > 0) {
+      let tempAtom = this.getAtom(massEdgeTo.pop())
+      tempAtom.Object3D.children.forEach(function (edge) {
+        if (edge.userData['to'] === glavAtom.number) {
+          let x = ((Number(position.x) + Number(tempAtom.x)) / 2) - Number(tempAtom.x)
+          let y = ((Number(position.y) + Number(tempAtom.y)) / 2) - Number(tempAtom.y)
+          let z = ((Number(position.z) + Number(tempAtom.z)) / 2) - Number(tempAtom.z)
+          let pointX = new THREE.Vector3(0, 0, 0)
+          let pointY = new THREE.Vector3(x, y, z)
+          let direction = new THREE.Vector3().subVectors(pointY, pointX)
+          let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
+          edge.geometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
+          edge.position.copy(new THREE.Vector3().addVectors(pointX, direction.multiplyScalar(0.5)))
+          edge.setRotationFromEuler(arrow.rotation)
         }
-      }
-      chAtom.Object3D.children = []
-      let x2 = (parseFloat(chAtom.x) + glavAtom.x) / 2
-      let y2 = (parseFloat(chAtom.y) + glavAtom.y) / 2
-      let z2 = (parseFloat(chAtom.z) + glavAtom.z) / 2
-      let fingerLength = this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - glavAtom.x, y2 - glavAtom.y, z2 - glavAtom.z))
-      let mat = new THREE.MeshPhongMaterial({
-        color: this.ColorAtoms[glavAtom.name][1],
-        specular: 0x00b2fc,
-        shininess: 12,
-        blending: THREE.NormalBlending,
-        depthTest: true
       })
-      fingerLength.material = mat
-      glavAtom.Object3D.add(fingerLength)
-      for (let f = 0; f < chAtom.connections.length; f++) {
-        let ch2Atom = null
-        let num2 = Number(chAtom.connections[f])
-        for (let k = 0; k < this.atoms.length; k++) {
-          if (Number(num2) === Number(this.atoms[k].number)) {
-            ch2Atom = this.atoms[k]
-          }
-        }
-        let x3 = (parseFloat(Number(ch2Atom.x)) + Number(chAtom.x)) / 2
-        let y3 = (parseFloat(Number(ch2Atom.y)) + Number(chAtom.y)) / 2
-        let z3 = (parseFloat(Number(ch2Atom.z)) + Number(chAtom.z)) / 2
-        let fingerLength = this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x3 - chAtom.x, y3 - chAtom.y, z3 - chAtom.z))
-        let mat = new THREE.MeshPhongMaterial({
-          color: this.ColorAtoms[chAtom.name][1],
-          specular: 0x00b2fc,
-          shininess: 12,
-          blending: THREE.NormalBlending,
-          depthTest: true
-        })
-        // console.log(mat)
-        fingerLength.material = mat
-        chAtom.Object3D.add(fingerLength)
-      }
     }
   }
   destuctor () {
@@ -299,5 +281,20 @@ export default class Molecule {
     let dy = Math.pow((startCoords.y - endCoords.y), 2)
     let dz = Math.pow((startCoords.z - endCoords.z), 2)
     return Math.sqrt(dx + dy + dz)
+  }
+  getAtom (num) {
+    for (let i = 0; i < this.atoms.length; i++) {
+      if (num === this.atoms[i].number) {
+        return this.atoms[i]
+      }
+    }
+    return false
+  }
+  getAtomPosition (num) {
+    for (let i = 0; i < this.atoms.length; i++) {
+      if (Number(num) === Number(this.atoms[i].number)) {
+        return this.atoms[i].Object3D.position
+      }
+    }
   }
 }
