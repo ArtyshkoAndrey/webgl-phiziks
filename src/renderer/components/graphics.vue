@@ -48,6 +48,7 @@
   import Graphics from '../../../static/Graphics.js'
   import Molecule from '../../../static/Molecule.js'
   import fs from 'fs'
+  import { Vector3 } from 'three'
   export default {
     name: 'index',
     data: () => {
@@ -108,7 +109,7 @@
         let x = Number(evt.target.elements.x.value)
         let y = Number(evt.target.elements.y.value)
         let z = Number(evt.target.elements.z.value)
-        this.molecule.changePosition(Number(this.molecule.ticks[0]), {x: x, y: y, z: z})
+        this.molecule.changePosition(Number(this.molecule.ticks[0]), new Vector3(x, y, z))
         this.molecule.ticks = []
         this.gl.renderer.render(this.gl.scene, this.gl.camera)
       },
