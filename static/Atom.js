@@ -1,4 +1,5 @@
 'use strict'
+import { Vector3, Mesh } from 'three'
 export default class Atom {
   constructor () {
     this.number = null
@@ -8,5 +9,19 @@ export default class Atom {
     this.name = null
     this.connections = []
     this.Object3D = {}
+  }
+  get position () {
+    return new Vector3(this.x, this.y, this.z)
+  }
+  set position (vector) {
+    this.x = vector.x
+    this.y = vector.y
+    this.z = vector.z
+    if (this.Object3D instanceof Mesh) {
+      this.setPositionObject()
+    }
+  }
+  setPositionObject () {
+    this.Object3D.position.set(this.x, this.y, this.z)
   }
 }
