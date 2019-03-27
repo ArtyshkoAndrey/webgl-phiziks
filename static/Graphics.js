@@ -40,9 +40,6 @@ export default class Graphics {
     this.light = new THREE.DirectionalLight(0xffffff, 1)
     this.light.position.set(10, 10, 10)
     this.scene.add(this.light)
-    // Линии осей
-    // let axes = new THREE.AxesHelper(10)
-    // this.scene.add(axes)
     this.axesHelper = new THREE.AxesHelper(0.2)
     if (window.innerWidth >= 900) {
       this.localToCameraAxesPlacement = new THREE.Vector3(-0.65 * this.camera.aspect, -0.6, -2)
@@ -59,7 +56,6 @@ export default class Graphics {
   initMolecule (molecule, ObjectMolecule) {
     this.molecule = molecule
     this.ObjectMolecule = ObjectMolecule
-    console.log(this.molecule)
   }
   // Функция рекрсивная для отображение 3D
   render () {
@@ -76,7 +72,6 @@ export default class Graphics {
   }
   // Выделение атома при клике
   raycast (event) {
-    console.log(event.offsetX)
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
     vector.set((event.offsetX / this.canvas.width) * 2 - 1, -(event.offsetY / this.canvas.height) * 2 + 1, 0.05) // z = 0.5 important!
@@ -106,7 +101,6 @@ export default class Graphics {
   }
   // Вывод инфы при наведении на атом
   getInfo (event) {
-    // console.log(event)
     let div = document.getElementById('infoMouse')
     let vector = new THREE.Vector3()
     let raycaster = new THREE.Raycaster()
@@ -132,10 +126,6 @@ export default class Graphics {
   }
   destuctor () {
     cancelAnimationFrame(this.requestA)
-    let self = this
-    this.molecule.atoms.forEach(function (atom) {
-      self.scene.remove(atom.Object3D)
-    })
     this.scene.remove(this.light)
     this.scene.remove(this.camera)
     this.renderer.dispose()
