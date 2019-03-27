@@ -74,13 +74,10 @@ export default class Molecule {
     }
   }
   // Рисование соединения цилиндрами
-  cylinderMesh (pointX, pointY, returned = 'all') {
+  cylinderMesh (pointX, pointY) {
     let direction = new THREE.Vector3().subVectors(pointY, pointX)
     let arrow = new THREE.ArrowHelper(direction.clone().normalize(), pointX, direction.length())
     let edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, direction.length(), 16, 4)
-    if (returned === 'geometry') {
-      return edgeGeometry
-    }
     let edgeMesh = new THREE.Mesh(edgeGeometry, new THREE.MeshBasicMaterial({
       color: 0x0000ff
     }))
