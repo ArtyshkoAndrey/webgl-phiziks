@@ -46,7 +46,7 @@
 
 <script>
   import Graphics from '../../../static/Graphics.js'
-  import Molecule from '../../../static/Molecule.js'
+  import Molecule from '../../../static/Molecule/common.js'
   import fs from 'fs'
   import { Vector3 } from 'three'
   export default {
