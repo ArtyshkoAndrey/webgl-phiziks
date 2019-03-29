@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three/src/Three'
 function changePosition (numAtom, position) {
   let glavAtom = this.getAtom(numAtom)
   let massEdgeTo = []

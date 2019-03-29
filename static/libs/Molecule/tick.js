@@ -1,4 +1,4 @@
-import { findAngle } from './../Math.js'
+import { findAngle } from '../../Math.js'
 function tick (intersects) {
   let ticked = false
   for (let i = 0; i < this.ticks.length; i++) {

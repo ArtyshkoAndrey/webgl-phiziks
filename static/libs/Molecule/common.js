@@ -1,5 +1,5 @@
 'use strict'
-import * as THREE from 'three'
+import * as THREE from 'three/src/Three'
 import { creatModel } from './creatModel.js'
 import { finderAtoms } from './finderAtoms.js'
 import { fileGetContents } from './fileGetContents.js'

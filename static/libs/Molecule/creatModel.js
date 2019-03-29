@@ -1,5 +1,4 @@
-'use strict'
-import * as THREE from 'three'
+import * as THREE from 'three/src/Three'
 // Создание модели молекулы в 3d, переделать по отдельным атомам
 function creatModel () {
   this.scene.add(this.ObjectMolecule)

@@ -1,5 +1,5 @@
-import Atom from './../Atom.js'
-import * as THREE from 'three'
+import Atom from '../../Atom.js'
+import * as THREE from 'three/src/Three'
 // Создание Атомов по парсеру файла
 function finderAtoms (url) {
   let info = this.fileGetContents(url)
