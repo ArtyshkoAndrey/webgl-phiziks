@@ -6,18 +6,18 @@
         .wrapper.mt-5
           h2 Start
           p
-            a(href="#") New project
+            a(href='#') New project
           p
-            a(href="#" @click='openFile()') Open file
+            a(href='#' @click='openFile()') Open file
       .col-md-4.col-sm-6.col-12.start
         .wrapper.mt-5
           h2 Help
           p
-            a(href="#" @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks")') GitHub repository
+            a(href='#' @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks")') GitHub repository
           p
-            a(href="#" @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks/wiki")') Product documentation
+            a(href='#' @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks/wiki")') Product documentation
           p
-            a(href="#" @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks/blob/master/readme.md")') About
+            a(href='#' @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks/blob/master/readme.md")') About
       .col-md-4.col-sm-6.col-12.start
         .wrapper.mt-5
           h2 Customize
@@ -39,12 +39,11 @@
     },
     methods: {
       openFile: function () {
-        let self = this
         let chooser = document.querySelector('#openfile')
         chooser.click()
-        chooser.addEventListener('change', function (evt) {
-          self.$parent.path = document.querySelector('#openfile').files[0].path
-          self.$router.push('graphics')
+        chooser.addEventListener('change', (evt) => {
+          this.$parent.path = document.querySelector('#openfile').files[0].path
+          this.$router.push('graphics')
         })
       }
     }
