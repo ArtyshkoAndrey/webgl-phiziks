@@ -1,7 +1,6 @@
 import * as THREE from 'three/src/Three'
 // Создание модели молекулы в 3d, переделать по отдельным атомам
-function creatModel () {
-  this.scene.add(this.ObjectMolecule)
+async function creatModel () {
   for (let i = 0; i < this.atoms.length; i++) {
     let material = new THREE.MeshPhongMaterial({
       color: this.ColorAtoms[this.atoms[i].name][1],
@@ -59,5 +58,6 @@ function creatModel () {
       }
     }
   }
+  console.log('end molecule')
 }
 export { creatModel }

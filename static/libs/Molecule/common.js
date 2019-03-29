@@ -14,6 +14,7 @@ class Molecule {
     this.ColorAtoms = {}
     this.ticks = []
     this.ObjectMolecule = new THREE.Object3D()
+    this.scene.add(this.ObjectMolecule)
   }
   destuctor () {
     for (let i = 0; i < this.atoms.length; i++) {

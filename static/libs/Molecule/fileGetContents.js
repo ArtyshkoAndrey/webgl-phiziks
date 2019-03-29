@@ -29,6 +29,7 @@ function fileGetContents (url) {
       fat.push(fix[i])
     }
   }
+  console.log('end file')
   return fat
 }
 

@@ -47,6 +47,7 @@
 <script>
   import Graphics from '../../../static/libs/Graphics/common.js'
   import Molecule from '../../../static/libs/Molecule/common.js'
+  // import path from 'path'
   import fs from 'fs'
   import { Vector3 } from 'three'
   export default {
@@ -57,31 +58,37 @@
         molecule: null
       }
     },
-    created () {
+    mounted () {
       if (!fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null
         this.molecule = null
         this.$router.push('index')
       }
-      this.gl = null
-      this.molecule = null
-      this.$nextTick(() => {
+      console.log(this.checkCanvas)
+      if (this.checkCanvas) {
+        let glCanvas = this.checkCanvas
         let bgColor = this.$store.getters.lightTheme
         this.gl = new Graphics(bgColor)
-        this.gl.init(document.getElementById('gl'))
+        this.gl.init(this.checkCanvas)
         this.molecule = new Molecule(this.gl.scene)
         this.molecule.finderAtoms(this.$parent.path)
-        this.molecule.creatModel()
+        // // this.molecule.creatModel()
+        // new Promise(async (resolve) => {
+        //   resolve(this.molecule.creatModel())
+        // })
+        console.log('test async')
         this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
         this.gl.render()
-        let glCanvas = document.getElementById('gl')
         glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
         window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
         glCanvas.addEventListener('mousemove', this.gl.getInfo.bind(this.gl.retThis()))
-      })
+      }
     },
     computed: {
+      checkCanvas () {
+        return document.getElementById('gl')
+      },
       checkTickAtom () {
         let pos = {}
         if (this.molecule instanceof Molecule) {
@@ -104,6 +111,12 @@
       }
     },
     methods: {
+      // initModel: async function () {
+      //   return new Promise(async (resolve) => {
+      //     resolve(this.molecule.creatModel())
+      //   })
+      //   // await this.molecule.creatModel()
+      // },
       // Исправил баг, перерисовка соединения по новому положению
       changePosition (evt) {
         let x = Number(evt.target.elements.x.value)
