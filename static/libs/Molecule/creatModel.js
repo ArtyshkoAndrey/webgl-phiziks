@@ -10,7 +10,7 @@ async function creatModel () {
       blending: THREE.NormalBlending,
       depthTest: true
     })
-    let geometry = new THREE.SphereGeometry(this.ColorAtoms[this.atoms[i].name][2] * this.k, 6, 6) // геометрия сферы
+    let geometry = new THREE.SphereGeometry(this.ColorAtoms[this.atoms[i].name][2] * this.k, 9, 9) // геометрия сферы
     this.atoms[i].Object3D = new THREE.Mesh(geometry, material)
     this.atoms[i].setPositionObject()
     this.atoms[i].Object3D.name = this.atoms[i].name
@@ -25,40 +25,40 @@ async function creatModel () {
   // связи
   for (let i = 0; i < this.atoms.length; i++) {
     for (let j = 0; j < this.atoms.length; j++) {
-      if (i !== j) {
-        if (!this.atoms[i].connections.includes(Number(this.atoms[j].number))) {
-          if (this.get3dDistance(this.atoms[i].position, this.atoms[j].position) < 1.5) {
-            this.atoms[i].connections.push(Number(this.atoms[j].number))
-            this.atoms[j].connections.push(Number(this.atoms[i].number))
-            let tempAtom = this.atoms[i]
-            let x1 = tempAtom.x
-            let y1 = tempAtom.y
-            let z1 = tempAtom.z
-            tempAtom = this.atoms[j]
-            let x2 = (tempAtom.x + x1) / 2
-            let y2 = (tempAtom.y + y1) / 2
-            let z2 = (tempAtom.z + z1) / 2
-            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j])
-            tempAtom = this.atoms[j]
-            x1 = tempAtom.x
-            y1 = tempAtom.y
-            z1 = tempAtom.z
-            tempAtom = this.atoms[i]
-            x2 = (tempAtom.x + x1) / 2
-            y2 = (tempAtom.y + y1) / 2
-            z2 = (tempAtom.z + z1) / 2
-            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
+      ((j, i) => {
+        setTimeout(() => {
+          if (i !== j) {
+            if (!this.atoms[i].connections.includes(Number(this.atoms[j].number))) {
+              if (this.get3dDistance(this.atoms[i].position, this.atoms[j].position) < 1.5) {
+                this.atoms[i].connections.push(Number(this.atoms[j].number))
+                this.atoms[j].connections.push(Number(this.atoms[i].number))
+                let tempAtom = this.atoms[i]
+                let x1 = tempAtom.x
+                let y1 = tempAtom.y
+                let z1 = tempAtom.z
+                tempAtom = this.atoms[j]
+                let x2 = (tempAtom.x + x1) / 2
+                let y2 = (tempAtom.y + y1) / 2
+                let z2 = (tempAtom.z + z1) / 2
+                // this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j]))
+                this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j])
+                // cycle1.call()
+                tempAtom = this.atoms[j]
+                x1 = tempAtom.x
+                y1 = tempAtom.y
+                z1 = tempAtom.z
+                tempAtom = this.atoms[i]
+                x2 = (tempAtom.x + x1) / 2
+                y2 = (tempAtom.y + y1) / 2
+                z2 = (tempAtom.z + z1) / 2
+                this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
+                // this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
+              }
+            }
           }
-        }
-      }
+        }, 1)
+      })(j, i)
     }
-    // if (this.atoms[i].connections.length > 0) {
-    //   for (let j = 0; j < this.atoms[i].connections.length; j++) {
-    //     let num = this.atoms[i].connections[j] // номер атома
-    //
-    //
-    //   }
-    // }
   }
   console.timeEnd('cycle')
   console.log('end molecule')

@@ -57,7 +57,7 @@
         molecule: null
       }
     },
-    async mounted () {
+    mounted () {
       if (!fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null

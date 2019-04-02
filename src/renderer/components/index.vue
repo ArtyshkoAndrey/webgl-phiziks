@@ -41,6 +41,7 @@
       openFile: function () {
         let chooser = document.querySelector('#openfile')
         chooser.click()
+        // this.$parent.status = true
         chooser.addEventListener('change', (evt) => {
           this.$parent.path = document.querySelector('#openfile').files[0].path
           this.$router.push('graphics')

@@ -1,5 +1,17 @@
 <template>
   <div id="app">
+    <div class='loader container-fuild' v-if="status">
+      <div class="d-flex row justify-content-center text-light" style="margin-top: 20%">
+        <div class="col-auto">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div class="col-12 pt-5 text-center">
+          <span class="pt-5">Loading...</span>
+        </div>
+      </div>
+    </div>
     <transition name="fade">
       <router-view></router-view>
     </transition>
@@ -12,7 +24,8 @@
     data: () => {
       return {
         path: '',
-        lightTheme: null
+        lightTheme: null,
+        status: false
       }
     },
     created () {
