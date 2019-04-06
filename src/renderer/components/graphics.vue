@@ -14,31 +14,34 @@
         </div>
       </div>
       <transition name='fade'>
-        <form v-if='checkTickAtom.check' v-on:submit.prevent="changePosition" class="mt-3">
-          <div class="form-group row m-0 p-0 mt-2">
-            <div class="col-12 d-flex">
-              <span class="d-inline-flex align-items-center align-middle">X=</span>
-              <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.x' name='x'>
+        <div v-if='checkTickAtom.check'>
+          <form v-on:submit.prevent="changePosition" class="mt-3">
+            <div class="form-group row m-0 p-0 mt-2">
+              <div class="col-12 d-flex">
+                <span class="d-inline-flex align-items-center align-middle">X=</span>
+                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.x' name='x'>
+              </div>
             </div>
-          </div>
-          <div class="form-group row m-0 p-0 mt-2">
-            <div class="col-12 d-flex">
-              <span class="d-inline-flex align-items-center align-middle">Y=</span>
-              <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.y' name='y'>
+            <div class="form-group row m-0 p-0 mt-2">
+              <div class="col-12 d-flex">
+                <span class="d-inline-flex align-items-center align-middle">Y=</span>
+                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.y' name='y'>
+              </div>
             </div>
-          </div>
-          <div class="form-group row m-0 p-0 mt-2">
-            <div class="col-12 d-flex">
-              <span class="d-inline-flex align-items-center align-middle">Z=</span>
-              <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.z' name='z'>
+            <div class="form-group row m-0 p-0 mt-2">
+              <div class="col-12 d-flex">
+                <span class="d-inline-flex align-items-center align-middle">Z=</span>
+                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.z' name='z'>
+              </div>
             </div>
-          </div>
-          <div class="form-group row m-0 p-0 mt-2">
-            <div class="col-12">
-              <input type="submit" class="btn btn-primary w-100" value="Применить">
+            <div class="form-group row m-0 p-0 mt-2">
+              <div class="col-12">
+                <input type="submit" class="btn btn-primary w-100" value="Применить">
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+          <button class="btn btn-danger mt-2 col-10 offset-1" @click="deleteAtom">Удалить</button>
+        </div>
       </transition>
     </div>
   </div>
@@ -125,6 +128,11 @@
         delete this.gl
         delete this.molecule
         this.$router.push('index')
+      },
+      deleteAtom () {
+        this.molecule.deleteAtom(Number(this.molecule.ticks[0]))
+        this.molecule.ticks = []
+        this.gl.renderer.render(this.gl.scene, this.gl.camera)
       }
     }
   }
