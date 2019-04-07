@@ -52,6 +52,7 @@
   import Molecule from '../../../static/libs/Molecule/common.js'
   import fs from 'fs'
   import { Vector3 } from 'three'
+  import DragControls from 'three-dragcontrols'
   export default {
     name: 'index',
     data: () => {
@@ -83,6 +84,16 @@
         glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
         window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
         glCanvas.addEventListener('mousemove', this.gl.getInfo.bind(this.gl.retThis()))
+        let dragControls = new DragControls(this.molecule.ObjectMolecule.children, this.gl.camera, this.gl.renderer.domElement)
+        dragControls.addEventListener('dragstart', () => {
+          this.gl.control.enabled = false
+        })
+        dragControls.addEventListener('dragend', () => {
+          this.gl.control.enabled = true
+        })
+        this.gl.renderer.domElement.addEventListener('mousemove', () => {
+          this.gl.renderer.render(this.gl.scene, this.gl.camera)
+        })
       }
     },
     computed: {
