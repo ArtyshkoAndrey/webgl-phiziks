@@ -64,7 +64,6 @@
         this.molecule = null
         this.$router.push('index')
       }
-      console.log(this.checkCanvas)
       if (this.checkCanvas) {
         let glCanvas = this.checkCanvas
         let bgColor = this.$store.getters.lightTheme
@@ -73,10 +72,8 @@
         this.molecule = new Molecule(this.gl.scene)
         this.molecule.finderAtoms(this.$parent.path)
         this.molecule.creatModel()
-        console.log('test async')
         this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
         this.gl.render()
-        console.log('Renderer')
         glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
         window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
         glCanvas.addEventListener('mousemove', this.gl.getInfo.bind(this.gl.retThis()))
@@ -131,7 +128,5 @@
 </script>
 
 <style scoped>
-  html, body {
-    overflow: hidden;
-  }
+
 </style>

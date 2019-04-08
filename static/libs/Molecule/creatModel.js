@@ -40,9 +40,7 @@ async function creatModel () {
                 let x2 = (tempAtom.x + x1) / 2
                 let y2 = (tempAtom.y + y1) / 2
                 let z2 = (tempAtom.z + z1) / 2
-                // this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j]))
                 this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j])
-                // cycle1.call()
                 tempAtom = this.atoms[j]
                 x1 = tempAtom.x
                 y1 = tempAtom.y
@@ -52,7 +50,6 @@ async function creatModel () {
                 y2 = (tempAtom.y + y1) / 2
                 z2 = (tempAtom.z + z1) / 2
                 this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
-                // this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
               }
             }
           }

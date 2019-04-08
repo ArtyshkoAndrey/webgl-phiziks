@@ -21,9 +21,9 @@ class Graphics {
     this.ObjectMolecule = null
   }
   // Создание свойства молекулы
-  async initMolecule (molecule, ObjectMolecule) {
-    this.molecule = await molecule
-    this.ObjectMolecule = await ObjectMolecule
+  initMolecule (molecule, ObjectMolecule) {
+    this.molecule = molecule
+    this.ObjectMolecule = ObjectMolecule
   }
   retThis () {
     return this
