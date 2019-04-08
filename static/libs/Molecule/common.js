@@ -6,6 +6,7 @@ import { fileGetContents } from './fileGetContents.js'
 import { tick } from './tick.js'
 import { changePosition } from './changePosition.js'
 import { cylinderMesh } from './cylinderMesh.js'
+import { deleteAtom } from './deleteAtom.js'
 class Molecule {
   constructor (scene) {
     this.scene = scene
@@ -49,5 +50,6 @@ Molecule.prototype.fileGetContents = fileGetContents
 Molecule.prototype.tick = tick
 Molecule.prototype.changePosition = changePosition
 Molecule.prototype.cylinderMesh = cylinderMesh
+Molecule.prototype.deleteAtom = deleteAtom
 
 export default Molecule

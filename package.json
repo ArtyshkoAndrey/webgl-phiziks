@@ -59,6 +59,7 @@
     "popper.js": "^1.14.7",
     "template-html-loader": "^1.0.0",
     "three": "^0.102.1",
+    "three-dragcontrols": "^0.88.2",
     "three-orbitcontrols": "^2.102.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",

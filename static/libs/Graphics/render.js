@@ -1,5 +1,5 @@
 // Функция рекрсивная для отображение 3D
-async function render () {
+function render () {
   this.control.update()
   if (this.camera.position.x !== this.pos.position.x) {
     this.camera.updateMatrixWorld()
