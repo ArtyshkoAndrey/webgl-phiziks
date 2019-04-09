@@ -13,22 +13,22 @@ export default new Vuex.Store({
   ],
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    light: false
+    dark: true
   },
   mutations: {
-    lightTheme (state, flag) {
-      state.light = flag
+    dark (state, flag) {
+      state.dark = flag
     }
   },
   actions: {
     setTheme ({ commit }, flag) {
       console.log('Test')
-      commit('lightTheme', flag)
+      commit('dark', flag)
     }
   },
   getters: {
-    lightTheme: state => {
-      return state.light
+    dark: state => {
+      return state.dark
     }
   }
 })

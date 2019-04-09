@@ -1,21 +1,31 @@
 <template>
-  <div id="app">
-    <div class='loader container-fuild' v-if="status">
-      <div class="d-flex row justify-content-center text-light" style="margin-top: 20%">
-        <div class="col-auto">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        <div class="col-12 pt-5 text-center">
-          <span class="pt-5">Loading...</span>
-        </div>
-      </div>
-    </div>
-    <transition name="fade">
-      <router-view></router-view>
-    </transition>
-  </div>
+  <v-app id="app" :dark="dark">
+    <v-navigation-drawer v-model="drawer" :temporary="true"
+                         absolute
+                         overflow
+                         app>
+      <v-list dense>
+        <v-divider></v-divider>
+        <v-list-tile @click="$router.push('/')">
+          <v-list-tile-action>
+            <v-icon>home</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Home</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar app absolute>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>Atoms</v-toolbar-title>
+    </v-toolbar>
+    <v-content>
+      <transition name="slide-x-transition" :duration="500" appear mode="out-in">
+        <router-view></router-view>
+      </transition>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -24,39 +34,19 @@
     data: () => {
       return {
         path: '',
-        lightTheme: null,
-        status: false
+        dark: true,
+        drawer: null
       }
     },
     created () {
-      // this.store.commit('lightTheme', true)
-      // this.$store.dispatch('setTheme', true)
-      console.log(this.$store.getters.lightTheme)
-      this.lightTheme = this.$store.getters.lightTheme
-      if (this.lightTheme) {
-        document.getElementsByTagName('body')[0].className += 'light'
-      } else {
-        document.getElementsByTagName('body')[0].className -= 'light'
-      }
+      console.log(this.$store.getters.dark)
+      this.dark = this.$store.getters.dark
     },
     watch: {
-      lightTheme: function (n, old) {
-        this.$store.dispatch('setTheme', this.lightTheme)
-        console.log(this.$store.getters.lightTheme)
-        if (this.lightTheme) {
-          if (!document.getElementsByTagName('body')[0].classList.contains('light')) {
-            document.getElementsByTagName('body')[0].classList.add('light')
-          }
-        } else {
-          if (document.getElementsByTagName('body')[0].classList.contains('light')) {
-            document.getElementsByTagName('body')[0].classList.remove('light')
-          }
-        }
+      dark: function (n, old) {
+        this.$store.dispatch('setTheme', this.dark)
+        console.log(this.$store.getters.dark)
       }
     }
   }
 </script>
-
-<style lang='scss'>
-
-</style>
