@@ -5,6 +5,10 @@
         <div id="InfoForAtom">
         </div>
       </v-flex>
+      <v-flex xs12 class="px-2">
+        <v-btn color="primary" @click="tick" block v-if="dragAndTick">Drag</v-btn>
+        <v-btn color="primary" block @click="drag" v-else>Tick</v-btn>
+      </v-flex>
       <!-- Создание атома -->
       <v-flex xs12 class="px-2 py-3">
         <h4>Add new Atom</h4>
@@ -45,7 +49,8 @@
         molecule: null,
         dragControls: null,
         events: [],
-        newAtom: null
+        newAtom: null,
+        dragAndTick: false
       }
     },
     mounted () {
@@ -64,22 +69,25 @@
         this.molecule.creatModel()
         this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
         this.gl.render()
+        // Listeners
         this.events[0] = this.gl.raycast.bind(this.gl.retThis())
         this.events[1] = this.gl.resizeWindow.bind(this.gl.retThis())
         this.events[2] = this.gl.getInfo.bind(this.gl.retThis())
-        this.checkCanvas.addEventListener('mousedown', this.events[0], false)
-        window.addEventListener('resize', this.events[1], false)
-        this.checkCanvas.addEventListener('mousemove', this.events[2], false)
         this.dragControls = new DragControls(this.molecule.ObjectMolecule.children, this.gl.camera, this.gl.renderer.domElement)
+        window.addEventListener('resize', this.events[1], false)
         this.dragControls.addEventListener('dragstart', () => {
           this.gl.control.enabled = false
         }, false)
-        this.dragControls.addEventListener('dragend', () => {
+        this.dragControls.addEventListener('dragend', (drag) => {
+          let temp = this.molecule.getAtom(drag.object.userData['AtomNumber'])
+          temp.position = temp.Object3D.position
+          this.molecule.getCycle(drag.object.userData['AtomNumber'])
           this.gl.control.enabled = true
         }, false)
         this.gl.renderer.domElement.addEventListener('mousemove', () => {
           this.gl.renderer.render(this.gl.scene, this.gl.camera)
         }, false)
+        this.drag()
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -91,7 +99,7 @@
         this.dragControls.removeEventListener('dragstart', () => {
           this.gl.control.enabled = false
         }, false)
-        this.dragControls.removeEventListener('dragend', () => {
+        this.dragControls.removeEventListener('dragend', (obj) => {
           this.gl.control.enabled = true
         }, false)
         this.gl.renderer.domElement.removeEventListener('mousemove', () => {
@@ -119,6 +127,18 @@
       }
     },
     methods: {
+      drag () {
+        this.dragAndTick = !this.dragAndTick
+        this.dragControls.activate()
+        this.checkCanvas.removeEventListener('mousedown', this.events[0], false)
+        this.checkCanvas.removeEventListener('mousemove', this.events[2], false)
+      },
+      tick () {
+        this.dragAndTick = !this.dragAndTick
+        this.dragControls.deactivate()
+        this.checkCanvas.addEventListener('mousedown', this.events[0], false)
+        this.checkCanvas.addEventListener('mousemove', this.events[2], false)
+      },
       addAtom () {
         console.log(this.newAtom)
         this.molecule.addAtom(this.newAtom[0])
