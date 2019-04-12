@@ -6,9 +6,9 @@ function init (domCanvas) {
   this.canvas.style.marginLeft = '150px'
   this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: this.canvas})
   if (this.bgColorBool) {
-    this.renderer.setClearColor(0xE6E6E6)
-  } else {
     this.renderer.setClearColor(0x1E1E1E)
+  } else {
+    this.renderer.setClearColor(0xE6E6E6)
   }
   this.renderer.setSize(window.innerWidth - 150, window.innerHeight)
   this.camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 150) / window.innerHeight, 1, 50)

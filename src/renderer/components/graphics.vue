@@ -1,50 +1,28 @@
 <template>
-  <div>
+  <v-container fluid style="padding: 0; position: initial;">
+    <v-layout row wrap style="width: 150px;">
+      <v-flex md12 xs12 class="px-2">
+        <div id="InfoForAtom">
+        </div>
+        <!-- Добавления  атома -->
+        <v-select
+          v-model='newAtom'
+          :items="Object.entries($parent.$parent.$parent.colorAtoms.atoms)"
+          item-text="[1].name"
+          item-value="[1].symbol"
+          single-line
+          return-object
+          persistent-hint
+          label="Standard"
+        ></v-select>
+        <v-btn color="success" @click="addAtom" block>Добавить</v-btn>
+        <!-- Кнопка удаления -->
+        <v-btn color="error" @click="deleteAtom" block v-if="checkTickAtom">Удалить</v-btn>
+      </v-flex>
+    </v-layout>
     <div id="infoMouse" class="text-white p-2" style='z-index:3 ;position:absolute; display:none; top:0; left:0; background-color: rgba(0, 0, 0, 0.5)'></div>
     <canvas id="gl" style='z-index: 1'></canvas>
-    <div class="border-right left-side-info shadow rounded">
-      <div class="row p-0 m-0 mt-2">
-        <div class="col-12">
-          <button class="btn btn-warning w-100" @click="goToHome()">Выход</button>
-        </div>
-      </div>
-      <div class="row p-0 m-0 mt-2">
-        <div class="col-12">
-          <p id="InfoForAtom" class></p>
-        </div>
-      </div>
-      <transition name='fade'>
-        <div v-if='checkTickAtom.check'>
-          <form v-on:submit.prevent="changePosition" class="mt-3">
-            <div class="form-group row m-0 p-0 mt-2">
-              <div class="col-12 d-flex">
-                <span class="d-inline-flex align-items-center align-middle">X=</span>
-                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.x' name='x'>
-              </div>
-            </div>
-            <div class="form-group row m-0 p-0 mt-2">
-              <div class="col-12 d-flex">
-                <span class="d-inline-flex align-items-center align-middle">Y=</span>
-                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.y' name='y'>
-              </div>
-            </div>
-            <div class="form-group row m-0 p-0 mt-2">
-              <div class="col-12 d-flex">
-                <span class="d-inline-flex align-items-center align-middle">Z=</span>
-                <input type="text" class="d-inline-flex form-control" :value='checkTickAtom.z' name='z'>
-              </div>
-            </div>
-            <div class="form-group row m-0 p-0 mt-2">
-              <div class="col-12">
-                <input type="submit" class="btn btn-primary w-100" value="Применить">
-              </div>
-            </div>
-          </form>
-          <button class="btn btn-danger mt-2 col-10 offset-1" @click="deleteAtom">Удалить</button>
-        </div>
-      </transition>
-    </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -58,7 +36,10 @@
     data: () => {
       return {
         gl: null,
-        molecule: null
+        molecule: null,
+        dragControls: null,
+        events: [],
+        newAtom: null
       }
     },
     mounted () {
@@ -69,56 +50,73 @@
         this.$router.push('index')
       }
       if (this.checkCanvas) {
-        let glCanvas = this.checkCanvas
-        let bgColor = this.$store.getters.lightTheme
+        let bgColor = this.$store.getters.dark
         this.gl = new Graphics(bgColor)
         this.gl.init(this.checkCanvas)
-        this.molecule = new Molecule(this.gl.scene)
+        this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
         this.molecule.finderAtoms(this.$parent.path)
         this.molecule.creatModel()
         this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
         this.gl.render()
-        glCanvas.addEventListener('mousedown', this.gl.raycast.bind(this.gl.retThis()))
-        window.addEventListener('resize', this.gl.resizeWindow.bind(this.gl.retThis()), false)
-        glCanvas.addEventListener('mousemove', this.gl.getInfo.bind(this.gl.retThis()))
-        let dragControls = new DragControls(this.molecule.ObjectMolecule.children, this.gl.camera, this.gl.renderer.domElement)
-        dragControls.addEventListener('dragstart', () => {
+        this.events[0] = this.gl.raycast.bind(this.gl.retThis())
+        this.events[1] = this.gl.resizeWindow.bind(this.gl.retThis())
+        this.events[2] = this.gl.getInfo.bind(this.gl.retThis())
+        this.checkCanvas.addEventListener('mousedown', this.events[0], false)
+        window.addEventListener('resize', this.events[1], false)
+        this.checkCanvas.addEventListener('mousemove', this.events[2], false)
+        this.dragControls = new DragControls(this.molecule.ObjectMolecule.children, this.gl.camera, this.gl.renderer.domElement)
+        this.dragControls.addEventListener('dragstart', () => {
           this.gl.control.enabled = false
-        })
-        dragControls.addEventListener('dragend', () => {
+        }, false)
+        this.dragControls.addEventListener('dragend', () => {
           this.gl.control.enabled = true
-        })
+        }, false)
         this.gl.renderer.domElement.addEventListener('mousemove', () => {
           this.gl.renderer.render(this.gl.scene, this.gl.camera)
-        })
+        }, false)
       }
+    },
+    beforeRouteLeave (to, from, next) {
+      console.log(window)
+      if (this.gl !== null && this.gl !== undefined) {
+        this.checkCanvas.removeEventListener('mousedown', this.events[0], false)
+        window.removeEventListener('resize', this.events[1], false)
+        this.checkCanvas.removeEventListener('mousemove', this.events[2], false)
+        this.dragControls.removeEventListener('dragstart', () => {
+          this.gl.control.enabled = false
+        }, false)
+        this.dragControls.removeEventListener('dragend', () => {
+          this.gl.control.enabled = true
+        }, false)
+        this.gl.renderer.domElement.removeEventListener('mousemove', () => {
+          this.gl.renderer.render(this.gl.scene, this.gl.camera)
+        }, false)
+        this.goToHome()
+      }
+      next()
     },
     computed: {
       checkCanvas () {
         return document.getElementById('gl')
       },
       checkTickAtom () {
-        let pos = {}
         if (this.molecule instanceof Molecule) {
           if (this.molecule.ticks.length === 1) {
-            for (let i = 0; i < this.molecule.atoms.length; i++) {
-              if (Number(this.molecule.atoms[i].number) === Number(this.molecule.ticks[0])) {
-                pos.x = this.molecule.atoms[i].x
-                pos.y = this.molecule.atoms[i].y
-                pos.z = this.molecule.atoms[i].z
-                pos.check = true
-              }
-            }
+            console.log(this.molecule)
+            return true
           } else {
-            pos.check = false
+            return false
           }
         } else {
-          pos.check = false
+          return false
         }
-        return pos
       }
     },
     methods: {
+      addAtom () {
+        console.log(this.newAtom)
+        this.molecule.addAtom(this.newAtom[0])
+      },
       // Исправил баг, перерисовка соединения по новому положению
       changePosition (evt) {
         let x = Number(evt.target.elements.x.value)
@@ -128,9 +126,9 @@
         this.molecule.ticks = []
         this.gl.renderer.render(this.gl.scene, this.gl.camera)
       },
-      goToHome () {
-        this.gl.destuctor()
-        this.molecule.destuctor()
+      goToHome  () {
+        this.gl.destructor()
+        this.molecule.destructor()
         this.gl = null
         this.molecule = null
         delete this.gl
@@ -138,6 +136,7 @@
         this.$router.push('index')
       },
       deleteAtom () {
+        console.log('Deleted')
         this.molecule.deleteAtom(Number(this.molecule.ticks[0]))
         this.molecule.ticks = []
         this.gl.renderer.render(this.gl.scene, this.gl.camera)

@@ -2,46 +2,27 @@
   <!-- Modal -->
   <v-dialog v-model="dialog" max-width="290">
     <v-card>
-      <v-card-title class="headline">Use Google's location service?</v-card-title>
+      <v-card-title class="headline">Choose theme</v-card-title>
       <v-card-text>
-        Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
+        <v-radio-group v-model="theme">
+          <v-radio
+            label="Dark Theme"
+            :value="true"
+          ></v-radio>
+          <v-radio
+            label="Light Theme"
+            :value="false"
+          ></v-radio>
+        </v-radio-group>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="green darken-1" flat="flat" @click="dialog = false">
-          Disagree
-        </v-btn>
-        <v-btn color="green darken-1" flat="flat" @click="dialog = false">
-          Agree
+          Exit
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
-<!--  <div class="modal fade" id="theme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog" role="document">-->
-<!--      <div class="modal-content">-->
-<!--        <div class="modal-header">-->
-<!--          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
-<!--          <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--            <span aria-hidden="true">&times;</span>-->
-<!--          </button>-->
-<!--        </div>-->
-<!--        <div class="modal-body">-->
-<!--          <div class="custom-control custom-radio">-->
-<!--            <input type="radio" id="customRadio1" v-model='theme' value='false' name="customRadio" class="custom-control-input">-->
-<!--            <label class="custom-control-label" for="customRadio1">Dark Theme</label>-->
-<!--          </div>-->
-<!--          <div class="custom-control custom-radio">-->
-<!--            <input type="radio" id="customRadio2" v-model='theme' value='true' name="customRadio" class="custom-control-input">-->
-<!--            <label class="custom-control-label" for="customRadio2">Light Theme</label>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="modal-footer">-->
-<!--          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
 </template>
 
 <script>
@@ -49,20 +30,23 @@
     name: 'theme',
     data: () => {
       return {
-        theme: null,
+        theme: true,
         dialog: false
       }
     },
-    created () {
-      this.theme = this.$parent.$parent.dark
+    methods: {
+      open () {
+        this.dialog = true
+      }
+    },
+    mounted () {
+      this.theme = this.$store.getters.dark
+      console.log(this.theme)
     },
     watch: {
       theme: function (n, old) {
-        if (this.theme === 'false') {
-          this.$parent.$parent.lightTheme = false
-        } else if (this.theme === 'true') {
-          this.$parent.$parent.lightTheme = true
-        }
+        this.$store.dispatch('setTheme', this.theme)
+        console.log(this.$store.getters.dark)
       }
     }
   }

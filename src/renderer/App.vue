@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app" :dark="dark">
+  <v-app id="app" :dark="theme">
     <v-navigation-drawer v-model="drawer" :temporary="true"
                          absolute
                          overflow
@@ -20,8 +20,8 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Atoms</v-toolbar-title>
     </v-toolbar>
-    <v-content>
-      <transition name="slide-x-transition" :duration="500" appear mode="out-in">
+    <v-content style="position: initial;">
+      <transition name="slide-x-transition" :duration="500" mode="out-in">
         <router-view></router-view>
       </transition>
     </v-content>
@@ -29,23 +29,24 @@
 </template>
 
 <script>
+  import { addWikiAtoms } from './../../static/libs/functions.js'
   export default {
     name: 'gl',
     data: () => {
       return {
         path: '',
         dark: true,
-        drawer: null
+        drawer: null,
+        colorAtoms: null
       }
     },
-    created () {
-      console.log(this.$store.getters.dark)
+    mounted () {
       this.dark = this.$store.getters.dark
+      this.colorAtoms = addWikiAtoms()
     },
-    watch: {
-      dark: function (n, old) {
-        this.$store.dispatch('setTheme', this.dark)
-        console.log(this.$store.getters.dark)
+    computed: {
+      theme () {
+        return this.$store.getters.dark
       }
     }
   }

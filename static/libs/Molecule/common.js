@@ -4,20 +4,20 @@ import { creatModel } from './creatModel.js'
 import { finderAtoms } from './finderAtoms.js'
 import { fileGetContents } from './fileGetContents.js'
 import { tick } from './tick.js'
-import { changePosition } from './changePosition.js'
 import { cylinderMesh } from './cylinderMesh.js'
 import { deleteAtom } from './deleteAtom.js'
+import { addAtom } from './addAtom.js'
 class Molecule {
-  constructor (scene) {
+  constructor (scene, ColorAtoms) {
     this.scene = scene
     this.atoms = []
+    this.atomsTest = new Set()
     this.k = 0.4
-    this.ColorAtoms = {}
+    this.ColorAtoms = ColorAtoms.atoms
     this.ticks = []
     this.ObjectMolecule = new THREE.Object3D()
-    this.scene.add(this.ObjectMolecule)
   }
-  destuctor () {
+  destructor () {
     for (let i = 0; i < this.atoms.length; i++) {
       this.ObjectMolecule.remove(this.atoms[i].Object3D)
       this.atoms[i].Object3D.material.dispose()
@@ -26,7 +26,6 @@ class Molecule {
     }
     this.scene.remove(this.ObjectMolecule)
     this.atoms = null
-    this.ColorAtoms = null
     this.ticks = null
   }
   get3dDistance (startCoords, endCoords) {
@@ -36,9 +35,9 @@ class Molecule {
     return Math.sqrt(dx + dy + dz)
   }
   getAtom (num) {
-    for (let i = 0; i < this.atoms.length; i++) {
-      if (num === this.atoms[i].number) {
-        return this.atoms[i]
+    for (let atom of this.atomsTest) {
+      if (atom.number === num) {
+        return atom
       }
     }
     return false
@@ -48,8 +47,8 @@ Molecule.prototype.creatModel = creatModel
 Molecule.prototype.finderAtoms = finderAtoms
 Molecule.prototype.fileGetContents = fileGetContents
 Molecule.prototype.tick = tick
-Molecule.prototype.changePosition = changePosition
 Molecule.prototype.cylinderMesh = cylinderMesh
 Molecule.prototype.deleteAtom = deleteAtom
+Molecule.prototype.addAtom = addAtom
 
 export default Molecule

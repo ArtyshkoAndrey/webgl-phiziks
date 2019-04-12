@@ -28,7 +28,7 @@ class Graphics {
   retThis () {
     return this
   }
-  destuctor () {
+  destructor () {
     cancelAnimationFrame(this.requestA)
     this.scene.remove(this.light)
     this.scene.remove(this.camera)

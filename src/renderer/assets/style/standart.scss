@@ -1,17 +1,7 @@
-* {
-  transition: 1s;
-}
 html, body {
   padding: 0;
   margin: 0;
-}
-body {
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: #3A3A3A !important;
-}
-p, h1, h2, h3, h4, h5 {
-  color: #929292;
+  overflow: overlay;
 }
 p {
   padding: 0;
@@ -19,63 +9,17 @@ p {
   margin-top: .3rem !important;
 }
 
-.start button {
-  padding: 0 !important;
-  background-color: transparent;
-  border: 0;
-  &:hover {
-    text-decoration: underline;
-    color: #0056b3 !important;
-  }
-}
-
-.modal-content {
-  background-color: #3A3A3A !important;
-  .modal-header, .modal-footer {
-    border-color: #2A2A2B;
-  }
-  p, span, label, h1, h2, h3, h4, h5, h6 {
-    color: white;
-  }
-}
-
-.left-side-info {
-  width: 150px;
-  height: 100%;
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  background-color: #3A3A3A !important;
-  border-color: #2A2A2B !important;
-  color: white;
-  p, h1, h2, h3, h4, h5, h6, label, span {
-    color: white;
-  }
-}
-
-.loader {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: #3A3A3A;
-  z-index: 5;
-}
-
 #gl {
   position: absolute;
   top: 0;
-  transition: 0s;
 }
 #infoMouse {
   transition: .1s;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  color: white;
 }
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
-  opacity: 0;
+.v-content__wrap {
+  position: initial;
 }

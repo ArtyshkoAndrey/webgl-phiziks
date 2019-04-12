@@ -1,7 +1,9 @@
 import * as THREE from 'three/src/Three'
 // Изменение размера канваса при изменении окна
 function resizeWindow () {
+  console.log(this.camera)
   this.camera.aspect = (window.innerWidth - 150) / window.innerHeight
+  console.log((window.innerWidth - 150) / window.innerHeight)
   this.camera.updateProjectionMatrix()
   this.renderer.setSize(window.innerWidth - 150, window.innerHeight)
   if (window.innerWidth >= 900) {

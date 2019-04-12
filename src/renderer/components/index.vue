@@ -16,17 +16,21 @@
         <a href='#' class="my-2" @click='require("electron").shell.openExternal("https://github.com/ArtyshkoAndrey/webgl-phiziks/blob/master/readme.md")'>About</a>
       </v-flex>
       <v-flex md3 xs12>
-        <h2>Start</h2>
-        <p class="primary--text mt-2 pb-0 mb-0">New project</p>
-        <p class="primary--text mt-2 pb-0 mb-0">Open File</p>
+        <h2>Settings</h2>
+        <a href='#' @click="openThemeModal" class="my-2">Select Theme</a>
       </v-flex>
+      <themeModal ref='theme'></themeModal>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+  import theme from './settings/theme.vue'
   export default {
     name: 'index',
+    components: {
+      'themeModal': theme
+    },
     methods: {
       openFile: function () {
         let chooser = document.querySelector('#openfile')
@@ -36,6 +40,9 @@
           this.$parent.path = document.querySelector('#openfile').files[0].path
           this.$router.push('graphics')
         })
+      },
+      openThemeModal () {
+        this.$refs.theme.open()
       }
     }
   }

@@ -1,55 +1,58 @@
 import * as THREE from 'three/src/Three'
-// Создание модели молекулы в 3d, переделать по отдельным атомам
+
 function creatModel () {
-  for (let i = 0; i < this.atoms.length; i++) {
+  for (let atom of this.atomsTest) {
     let material = new THREE.MeshPhongMaterial({
-      color: this.ColorAtoms[this.atoms[i].name][1],
+      color: this.ColorAtoms[atom.name].color,
       specular: 0x00b2fc,
       shininess: 0,
       blending: THREE.NormalBlending,
       depthTest: true
     })
-    let geometry = new THREE.SphereGeometry(this.ColorAtoms[this.atoms[i].name][2] * this.k, 9, 9) // геометрия сферы
-    this.atoms[i].Object3D = new THREE.Mesh(geometry, material)
-    this.atoms[i].setPositionObject()
-    this.atoms[i].Object3D.name = this.atoms[i].name
-    this.atoms[i].Object3D.userData['AtomPosition'] = this.atoms[i].position
-    this.atoms[i].Object3D.userData['AtomNumber'] = this.atoms[i].number
-    this.atoms[i].Object3D.userData['AtomName'] = this.atoms[i].name
-    this.atoms[i].Object3D.userData['AtomConnections'] = this.atoms[i].connections
-    this.ObjectMolecule.add(this.atoms[i].Object3D)
+    let geometry = new THREE.SphereGeometry((this.ColorAtoms[atom.name].radius / 100) * this.k, 9, 9) // геометрия сферы
+    atom.Object3D = new THREE.Mesh(geometry, material)
+    atom.setPositionObject()
+    atom.Object3D.name = atom.name
+    atom.Object3D.userData['AtomPosition'] = atom.position
+    atom.Object3D.userData['AtomNumber'] = atom.number
+    atom.Object3D.userData['AtomName'] = atom.name
+    atom.Object3D.userData['AtomConnections'] = atom.connections
+    this.ObjectMolecule.add(atom.Object3D)
   }
   // связи
-  for (let i = 0; i < this.atoms.length; i++) {
-    for (let j = 0; j < this.atoms.length; j++) {
+  let i = 0
+  let j = 0
+  for (let atomFirst of this.atomsTest) {
+    j = 0
+    for (let atomSecond of this.atomsTest) {
       if (i !== j) {
-        if (!this.atoms[i].connections.includes(Number(this.atoms[j].number))) {
-          if (this.get3dDistance(this.atoms[i].position, this.atoms[j].position) < 1.5) {
-            this.atoms[i].connections.push(Number(this.atoms[j].number))
-            this.atoms[j].connections.push(Number(this.atoms[i].number))
-            let tempAtom = this.atoms[i]
-            let x1 = tempAtom.x
-            let y1 = tempAtom.y
-            let z1 = tempAtom.z
-            tempAtom = this.atoms[j]
-            let x2 = (tempAtom.x + x1) / 2
-            let y2 = (tempAtom.y + y1) / 2
-            let z2 = (tempAtom.z + z1) / 2
-            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[i], this.atoms[j])
-            tempAtom = this.atoms[j]
-            x1 = tempAtom.x
-            y1 = tempAtom.y
-            z1 = tempAtom.z
-            tempAtom = this.atoms[i]
-            x2 = (tempAtom.x + x1) / 2
-            y2 = (tempAtom.y + y1) / 2
-            z2 = (tempAtom.z + z1) / 2
-            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), this.atoms[j], this.atoms[i])
+        if (!atomFirst.connections.includes(Number(atomSecond.number))) {
+          if (this.get3dDistance(atomFirst.position, atomSecond.position) <= ((this.ColorAtoms[atomFirst.name].covalentRadius / 100) + (this.ColorAtoms[atomSecond.name].covalentRadius / 100))) {
+            atomFirst.connections.push(Number(atomSecond.number))
+            atomSecond.connections.push(Number(atomFirst.number))
+            let x1 = atomFirst.x
+            let y1 = atomFirst.y
+            let z1 = atomFirst.z
+            let x2 = (atomSecond.x + x1) / 2
+            let y2 = (atomSecond.y + y1) / 2
+            let z2 = (atomSecond.z + z1) / 2
+            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), atomFirst, atomSecond)
+            x1 = atomSecond.x
+            y1 = atomSecond.y
+            z1 = atomSecond.z
+            x2 = (atomFirst.x + x1) / 2
+            y2 = (atomFirst.y + y1) / 2
+            z2 = (atomFirst.z + z1) / 2
+            this.cylinderMesh(new THREE.Vector3(0, 0, 0), new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1), atomSecond, atomFirst)
           }
         }
       }
+      j++
     }
+    i++
   }
+  this.scene.add(this.ObjectMolecule)
   console.log('end molecule')
 }
+
 export { creatModel }

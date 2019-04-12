@@ -14,9 +14,9 @@ function tick (intersects) {
     document.getElementById('InfoForAtom').textContent = intersects.object.userData.AtomNumber + ' ' + intersects.object.userData.AtomName + ': ' + intersects.object.userData.AtomPosition.x + ' ' + intersects.object.userData.AtomPosition.y + ' ' + intersects.object.userData.AtomPosition.z
     this.ticks.push(intersects.object.userData['AtomNumber'])
   } else {
-    intersects.object.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']][1])
+    intersects.object.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']].color)
     intersects.object.children.forEach((cycle) => {
-      cycle.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']][1])
+      cycle.material.color.set(this.ColorAtoms[intersects.object.userData['AtomName']].color)
     })
     let num = this.ticks.indexOf(intersects.object.userData['AtomNumber'])
     this.ticks.splice(num, 1)
