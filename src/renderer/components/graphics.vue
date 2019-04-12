@@ -91,6 +91,7 @@
       }
     },
     beforeRouteLeave (to, from, next) {
+      // Добавить удаления слушателей, так как они обновились
       console.log(window)
       if (this.gl !== null && this.gl !== undefined) {
         this.checkCanvas.removeEventListener('mousedown', this.events[0], false)
