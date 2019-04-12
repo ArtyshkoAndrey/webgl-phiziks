@@ -4,8 +4,11 @@
       <v-flex md12 xs12 class="px-2">
         <div id="InfoForAtom">
         </div>
-        <!-- Добавления  атома -->
-        <v-select
+      </v-flex>
+      <!-- Создание атома -->
+      <v-flex xs12 class="px-2 py-3">
+        <h4>Add new Atom</h4>
+        <v-select class="py-0"
           v-model='newAtom'
           :items="Object.entries($parent.$parent.$parent.colorAtoms.atoms)"
           item-text="[1].name"
@@ -13,11 +16,14 @@
           single-line
           return-object
           persistent-hint
-          label="Standard"
+          label="Atom name"
         ></v-select>
-        <v-btn color="success" @click="addAtom" block>Добавить</v-btn>
+        <v-btn color="success" v-if="newAtom !== null" @click="addAtom" block>Добавить</v-btn>
+      </v-flex>
+      <v-flex class="px-2 py-3" v-if="checkTickAtom">
         <!-- Кнопка удаления -->
-        <v-btn color="error" @click="deleteAtom" block v-if="checkTickAtom">Удалить</v-btn>
+        <h4>Delete selected Atom</h4>
+        <v-btn color="error" @click="deleteAtom" block >Удалить</v-btn>
       </v-flex>
     </v-layout>
     <div id="infoMouse" class="text-white p-2" style='z-index:3 ;position:absolute; display:none; top:0; left:0; background-color: rgba(0, 0, 0, 0.5)'></div>
@@ -116,6 +122,8 @@
       addAtom () {
         console.log(this.newAtom)
         this.molecule.addAtom(this.newAtom[0])
+        this.newAtom = null
+        this.gl.renderer.render(this.gl.scene, this.gl.camera)
       },
       // Исправил баг, перерисовка соединения по новому положению
       changePosition (evt) {

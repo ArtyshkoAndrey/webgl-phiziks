@@ -3,15 +3,41 @@
     <v-navigation-drawer v-model="drawer" :temporary="true"
                          absolute
                          overflow
+                         floating
                          app>
+      <v-toolbar flat class="transparent">
+        <v-list>
+          <v-list-tile>
+            <v-list-tile-title class="title">
+              Menu
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-toolbar>
+      <v-divider></v-divider>
       <v-list dense>
-        <v-divider></v-divider>
         <v-list-tile @click="$router.push('/')">
           <v-list-tile-action>
             <v-icon>home</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Home</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="$router.push('/')">
+          <v-list-tile-action>
+            <v-icon class="blue--text">settings</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Settings</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="require('electron').remote.getCurrentWindow().close()">
+          <v-list-tile-action>
+            <v-icon class="red--text">exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Close App</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
