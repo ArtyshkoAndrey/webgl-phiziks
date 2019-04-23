@@ -1,57 +1,34 @@
 'use strict'
-import { getInfo } from './getInfo.js'
-import { init } from './init.js'
-import { raycast } from './raycast.js'
-import { render } from './render.js'
-import { resizeWindow } from './resizeWindow.js'
-class Graphics {
-  constructor (bgColorBool) {
-    this.scene = null
-    this.camera = null
-    this.renderer = null
-    this.light = null
-    this.control = null
-    this.pos = null
-    this.canvas = null
-    this.molecule = null
-    this.bgColorBool = bgColorBool
-    this.requestA = null
-    this.localToCameraAxesPlacement = null
-    this.axesHelper = null
-    this.ObjectMolecule = null
-  }
-  // Создание свойства молекулы
-  initMolecule (molecule, ObjectMolecule) {
-    this.molecule = molecule
-    this.ObjectMolecule = ObjectMolecule
-  }
-  retThis () {
-    return this
-  }
-  destructor () {
-    cancelAnimationFrame(this.requestA)
-    this.scene.remove(this.light)
-    this.scene.remove(this.camera)
-    this.renderer.dispose()
-    this.scene.dispose()
-    this.requestA = null
-    this.pos = null
-    this.scene = null
-    this.control = null
-    this.camera = null
-    this.light = null
-    this.renderer.forceContextLoss()
-    this.renderer.context = null
-    this.renderer.domElement = null
-    this.canvas = null
-    this.molecule = null
-    this.bgColorBool = null
-  }
+import * as BABYLON from 'babylonjs'
+class Molvwr {
 }
 
-Graphics.prototype.init = init
-Graphics.prototype.getInfo = getInfo
-Graphics.prototype.raycast = raycast
-Graphics.prototype.render = render
-Graphics.prototype.resizeWindow = resizeWindow
-export default Graphics
+class BabylonContext {
+  constructor (canvas) {
+    this.canvas = canvas
+    this.scene = new BABYLON.Scene(this.engine)
+    this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true })
+    this.engine.runRenderLoop(() => {
+      if (this.scene) {
+        this.scene.render()
+      }
+    })
+    this.bindedResize = this.resize.bind(this)
+    window.addEventListener('resize', this.bindedResize)
+  }
+  resize () {
+    this.engine.resize()
+  }
+  exportScreenshot () {
+    return this.canvas.toDataURL('image/png')
+  }
+  dispose () {
+    this.engine.dispose()
+    window.removeEventListener('resize', this.bindedResize)
+  }
+  sphereMaterial (mesh, atomMat, useEffects) {
+    if (this.viewmode) {
+      this.viewmode.sphereMaterial(this, mesh, atomMat, useEffects)
+    }
+  }
+}
