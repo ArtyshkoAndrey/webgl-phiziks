@@ -36,8 +36,7 @@
 </template>
 
 <script>
-  import Graphics from '../../../static/libs/Graphics/common.js'
-  import Molecule from '../../../static/libs/Molecule/common.js'
+  import Molvwr from '../../../static/libs/Graphics/common.js'
   import fs from 'fs'
   export default {
     name: 'index',
@@ -61,6 +60,7 @@
       if (this.checkCanvas) {
         let bgColor = this.$store.getters.dark
         console.log(bgColor)
+        console.log(Molvwr)
       }
     },
     computed: {
