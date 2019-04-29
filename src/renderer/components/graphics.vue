@@ -53,7 +53,7 @@
         dragAndTick: false
       }
     },
-    mounted () {
+    async mounted () {
       if (!fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null
