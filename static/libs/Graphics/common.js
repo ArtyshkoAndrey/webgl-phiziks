@@ -633,7 +633,7 @@ export class Utils {
   resolve (newValue) {
     try {
       if (newValue === this) {
-        throw new TypeError('A promise cannot be resolved with itself.')
+        return new TypeError('A promise cannot be resolved with itself.')
       }
       if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
         let then = newValue.then
@@ -650,7 +650,7 @@ export class Utils {
       this.reject(e)
     }
   }
-  reject(newValue) {
+  reject (newValue) {
     this._state = false
     this._value = newValue
     this.finale()
@@ -699,13 +699,13 @@ export class Promise {
     if (typeof this !== 'object') {
       throw new TypeError('Promises must be constructed via new')
     }
-    if (typeof fn !== 'function') {
+    if (typeof fh !== 'function') {
       throw new TypeError('not a function')
     }
     this._state = null
     this._value = null
     this._deferreds = []
-    doResolve(fn, resolve.bind(this), reject.bind(this))
+    new Utils().doResolve(fh, resolve.bind(this), reject.bind(this))
   }
   catch (onRejected) {
     return this.then(null, onRejected)
