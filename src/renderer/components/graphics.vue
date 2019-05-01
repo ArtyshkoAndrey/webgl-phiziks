@@ -53,7 +53,7 @@
         dragAndTick: false
       }
     },
-    async mounted () {
+    mounted () {
       if (!fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null
@@ -61,14 +61,27 @@
         this.$router.push('index')
       }
       if (this.checkCanvas) {
-        let bgColor = this.$store.getters.dark
-        this.gl = new Graphics(bgColor)
-        this.gl.init(this.checkCanvas)
-        this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
-        this.molecule.finderAtoms(this.$parent.path)
-        this.molecule.creatModel()
-        this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
-        this.gl.render()
+        new Promise(resolve => {
+          let bgColor = this.$store.getters.dark
+          this.gl = new Graphics(bgColor)
+          this.gl.init(this.checkCanvas)
+          this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
+          this.molecule.finderAtoms(this.$parent.path)
+          resolve()
+        })
+          .then(() => {
+            this.molecule.creatModel()
+              .then(() => {
+                console.log('Ok')
+                this.gl.initMolecule(this.molecule, this.molecule.ObjectMolecule)
+                this.gl.render()
+              })
+          })
+        // let bgColor = this.$store.getters.dark
+        // this.gl = new Graphics(bgColor)
+        // this.gl.init(this.checkCanvas)
+        // this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
+        // this.molecule.finderAtoms(this.$parent.path)
         // Listeners
         this.events[0] = this.gl.raycast.bind(this.gl.retThis())
         this.events[1] = this.gl.resizeWindow.bind(this.gl.retThis())
