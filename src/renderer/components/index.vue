@@ -26,6 +26,8 @@
 
 <script>
   import theme from './settings/theme.vue'
+  // const electron = require('electron')
+  // const ipc = electron.ipcRenderer
   export default {
     name: 'index',
     components: {
@@ -33,6 +35,7 @@
     },
     methods: {
       openFile: function () {
+        // ipc.send('webGlWindow-window-open')
         let chooser = document.querySelector('#openfile')
         chooser.click()
         // this.$parent.status = true
