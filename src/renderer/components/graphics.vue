@@ -31,6 +31,7 @@
         console.log(bgColor)
         this.gl = new Graphics(this.checkCanvas)
         this.gl.init()
+        this.gl.fileGetContents(this.$parent.path)
         window.addEventListener('resize', () => {
           this.gl.engine.resize()
         })
