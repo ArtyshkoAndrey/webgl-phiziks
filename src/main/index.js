@@ -1,6 +1,11 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
+const electron = require('electron')
+// const path = require('path')
+// const url = require('url')
+const ipc = electron.ipcMain
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -10,9 +15,30 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+let webGlWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+
+ipc.on('webGlWindow-window-open', () => {
+  webGlWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    minWidth: 600,
+    minHeight: 400,
+    show: false,
+    parent: mainWindow,
+    modal: true
+    // frame: false,
+  })
+  webGlWindow.loadURL('http://alexan0308.github.io/threejs/examples/#loader_molecule_xyz')
+  webGlWindow.on('closed', () => {
+    webGlWindow = null
+  })
+  webGlWindow.once('ready-to-show', () => {
+    webGlWindow.show()
+  })
+})
 
 function createWindow () {
   /**
