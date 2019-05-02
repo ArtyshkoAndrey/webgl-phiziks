@@ -3,11 +3,12 @@ import * as BABYLON from 'babylonjs'
 import fs from 'fs'
 
 export default class Graphics {
-  constructor (canvas) {
+  constructor (canvas, colorAtoms) {
     this.canvas = canvas
     this.camera = null
     this.light0 = null
     this.molecule = null
+    this.colorAtoms = colorAtoms
     if (BABYLON.Engine.isSupported()) {
       this.engine = new BABYLON.Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true})
     }
@@ -31,7 +32,8 @@ export default class Graphics {
     this.scene.render()
   }
   reedMol (data = null) {
-    let bounds = [[1, 2], [3, 2], [1, 4]]
+    // console.log(this.colorAtoms.atoms['H'])
+    let bounds = []
     if (data) {
       data.forEach((atom, index) => {
         let atom3D = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0.7, this.scene)
@@ -40,16 +42,21 @@ export default class Graphics {
         atom3D.position.y = atom[3]
         atom3D.position.z = atom[4]
         atom3D.parent = this.molecule
+        for (let i = index + 1; i < data.length; i++) {
+          let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom[2], atom[3], atom[4]), new BABYLON.Vector3(data[i][2], data[i][3], data[i][4]))
+          // console.log(distance)
+          if (distance <= ((this.colorAtoms.atoms[atom[1]].covalentRadius / 100) + (this.colorAtoms.atoms[data[i][1]].covalentRadius / 100))) {
+            bounds.push([index, i])
+            // console.log(distance)
+          }
+        }
       })
     }
     bounds.forEach((bound) => {
-      let atom1 = this.molecule._children[bound[0]]
-      console.log(atom1)
-      let atom2 = this.molecule._children[bound[1]]
-      let bond3D = this.creatCyclinder(atom1.position.x, atom1.position.y, atom1.position.z, atom2.position.x, atom2.position.y, atom2.position.z, true)
+      let bond3D = this.creatCyclinder(data[bound[0]][2], data[bound[0]][3], data[bound[0]][4], data[bound[1]][2], data[bound[1]][3], data[bound[1]][4], true)
       bond3D.parent = this.molecule
     })
-    console.log(this.molecule)
+    // console.log(this.molecule)
   }
   fileGetContents (url) {
     let txt = fs.readFileSync(url, 'utf-8')
@@ -90,11 +97,12 @@ export default class Graphics {
     x1 = Number(x1)
     y1 = Number(y1)
     z1 = Number(z1)
+    let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(x0, y0, z0), new BABYLON.Vector3(x1, y1, z1))
     let v = new BABYLON.Vector3(x0 - x1, y0 - y1, z0 - z1)
     let len = v.length()
-    let cylinder = BABYLON.Mesh.CreateCylinder('cylinder', 1, 0.25, 6, this.scene, false)
-    let material = new BABYLON.StandardMaterial('material01', this.scene)
-    material.diffuseColor = new BABYLON.Color3(255, 255, 255)
+    let cylinder = BABYLON.Mesh.CreateCylinder('cylinder', distance, 0.25, 0.25, 6, 1, this.scene, false)
+    let material = new BABYLON.StandardMaterial('material02', this.scene)
+    material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
     cylinder.material = material
 
     if (len > 0.001) {
@@ -106,7 +114,7 @@ export default class Graphics {
     cylinder.position.x = (x1 + x0) / 2
     cylinder.position.y = (y1 + y0) / 2
     cylinder.position.z = (z1 + z0) / 2
-
+    // console.log(cylinder)
     return cylinder
   }
 }

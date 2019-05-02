@@ -29,7 +29,7 @@
       if (this.checkCanvas) {
         let bgColor = this.$store.getters.dark
         console.log(bgColor)
-        this.gl = new Graphics(this.checkCanvas)
+        this.gl = new Graphics(this.checkCanvas, this.$parent.$parent.$parent.colorAtoms)
         this.gl.init()
         this.gl.fileGetContents(this.$parent.path)
         window.addEventListener('resize', () => {
