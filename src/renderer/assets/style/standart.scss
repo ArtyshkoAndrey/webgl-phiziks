@@ -12,7 +12,8 @@ p {
 #gl {
   position: absolute;
   top: 0;
-  width: 100vw;
+  left: 150px;
+  width: calc(100vw - 150px);
   height: 100vh;
 }
 #infoMouse {
