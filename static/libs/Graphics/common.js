@@ -26,13 +26,21 @@ export default class Graphics {
     this.camera.lowerRadiusLimit = 10
     this.camera.upperRadiusLimit = 80
     this.camera.idleRotationSpeed = 20
-    // this.camera.useAutoRotationBehavior = true
+    this.camera.useAutoRotationBehavior = true
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
     this.gizmoManager = new BABYLON.GizmoManager(this.scene)
     this.gizmoManager.positionGizmoEnabled = true
-    this.gizmoManager.rotationGizmoEnabled = false
+    this.gizmoManager.rotationGizmoEnabled = true
     this.gizmoManager.scaleGizmoEnabled = false
+    // this.gizmoManager.dragBehavior.onDragObservable.add(() => { console.log('drag') })
+    this.scene.onPointerDown = (evt, pickResult) => {
+      if (evt.button !== 0) { return }
+      if (pickResult.hit && pickResult.pickedMesh) {
+        console.log(pickResult.pickedMesh)
+        pickResult.pickedMesh.material.diffuseColor = new BABYLON.Color3.FromHexString('#ff0000')
+      }
+    }
   }
   renderLoop () {
     this.scene.render()
@@ -45,22 +53,22 @@ export default class Graphics {
         let atom3D = new BABYLON.Mesh.CreateSphere('Sphere', 16, this.colorAtoms.atoms[atom[1]].radius / 100, this.scene)
         atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
         atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms.atoms[atom[1]].color)
-        atom3D.position.x = atom[2]
-        atom3D.position.y = atom[3]
-        atom3D.position.z = atom[4]
+        atom3D.position.x = Number(atom[2])
+        atom3D.position.y = Number(atom[3])
+        atom3D.position.z = Number(atom[4])
         atom3D.parent = this.molecule
         for (let i = index + 1; i < data.length; i++) {
           let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom[2], atom[3], atom[4]), new BABYLON.Vector3(data[i][2], data[i][3], data[i][4]))
           // console.log(distance)
           if (distance <= ((this.colorAtoms.atoms[atom[1]].covalentRadius / 100) + (this.colorAtoms.atoms[data[i][1]].covalentRadius / 100))) {
-            bounds.push([index, i])
+            bounds.push([index, i, atom3D])
             // console.log(distance)
           }
         }
       })
     }
     bounds.forEach((bound) => {
-      let bond3D = this.creatCyclinder(data[bound[0]][2], data[bound[0]][3], data[bound[0]][4], data[bound[1]][2], data[bound[1]][3], data[bound[1]][4], true)
+      let bond3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2], data[bound[1]][3], data[bound[1]][4], true)
       bond3D.parent = this.molecule
     })
     // this.egine.hideLoadingUI()
