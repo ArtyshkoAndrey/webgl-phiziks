@@ -9,11 +9,13 @@ export default class Graphics {
     this.light0 = null
     this.molecule = null
     this.colorAtoms = colorAtoms
+    this.assetsManager = null
     if (BABYLON.Engine.isSupported()) {
       this.engine = new BABYLON.Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true})
     }
   }
   init () {
+    // this.engine.displayLoadingUI()
     this.scene = new BABYLON.Scene(this.engine)
     this.camera = new BABYLON.ArcRotateCamera('Camera', 0, 0.8, 15, new BABYLON.Vector3.Zero(), this.scene)
     this.light0 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), this.scene)
@@ -24,9 +26,13 @@ export default class Graphics {
     this.camera.lowerRadiusLimit = 10
     this.camera.upperRadiusLimit = 80
     this.camera.idleRotationSpeed = 20
-    this.camera.useAutoRotationBehavior = true
+    // this.camera.useAutoRotationBehavior = true
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
-    this.engine.runRenderLoop(this.renderLoop.bind(this))
+    this.molecule.isVisible = false
+    this.gizmoManager = new BABYLON.GizmoManager(this.scene)
+    this.gizmoManager.positionGizmoEnabled = true
+    this.gizmoManager.rotationGizmoEnabled = false
+    this.gizmoManager.scaleGizmoEnabled = false
   }
   renderLoop () {
     this.scene.render()
@@ -36,8 +42,9 @@ export default class Graphics {
     let bounds = []
     if (data) {
       data.forEach((atom, index) => {
-        let atom3D = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0.7, this.scene)
+        let atom3D = new BABYLON.Mesh.CreateSphere('Sphere', 16, this.colorAtoms.atoms[atom[1]].radius / 100, this.scene)
         atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
+        atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms.atoms[atom[1]].color)
         atom3D.position.x = atom[2]
         atom3D.position.y = atom[3]
         atom3D.position.z = atom[4]
@@ -56,7 +63,10 @@ export default class Graphics {
       let bond3D = this.creatCyclinder(data[bound[0]][2], data[bound[0]][3], data[bound[0]][4], data[bound[1]][2], data[bound[1]][3], data[bound[1]][4], true)
       bond3D.parent = this.molecule
     })
+    // this.egine.hideLoadingUI()
     // console.log(this.molecule)
+    this.engine.runRenderLoop(this.renderLoop.bind(this))
+    this.gizmoManager.attachableMeshes = this.molecule._children
   }
   fileGetContents (url) {
     let txt = fs.readFileSync(url, 'utf-8')
@@ -114,7 +124,9 @@ export default class Graphics {
     cylinder.position.x = (x1 + x0) / 2
     cylinder.position.y = (y1 + y0) / 2
     cylinder.position.z = (z1 + z0) / 2
-    // console.log(cylinder)
     return cylinder
+  }
+  retThis () {
+    return this
   }
 }

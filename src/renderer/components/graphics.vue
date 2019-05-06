@@ -31,10 +31,12 @@
         console.log(bgColor)
         this.gl = new Graphics(this.checkCanvas, this.$parent.$parent.$parent.colorAtoms)
         this.gl.init()
-        this.gl.fileGetContents(this.$parent.path)
+        setTimeout(this.gl.fileGetContents(this.$parent.path), 1)
         window.addEventListener('resize', () => {
           this.gl.engine.resize()
         })
+        // console.log(this.gl.molecule)
+        // console.log(this.gl.molecule._children)
       }
     },
     computed: {
