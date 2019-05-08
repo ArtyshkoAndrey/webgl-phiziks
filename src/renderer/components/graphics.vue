@@ -50,15 +50,13 @@
       }
     },
     mounted () {
-      if (!fs.existsSync(this.$parent.path)) {
+      if (this.$parent.path === '' || !fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null
         this.molecule = null
         this.$router.push('index')
-      }
-      if (this.checkCanvas) {
-        let bgColor = this.$store.getters.dark
-        console.log(bgColor)
+      } else if (this.checkCanvas) {
+        // let bgColor = this.$store.getters.dark
         this.gl = new Graphics(this.checkCanvas, this.$parent.$parent.$parent.colorAtoms)
         this.gl.init()
         setTimeout(this.gl.fileGetContents(this.$parent.path), 1)
@@ -75,12 +73,19 @@
       }
     },
     beforeRouteLeave (to, from, next) {
-      this.gl.engine.dispose()
-      this.gl.scene.dispose()
-      this.gl.molecule._children.forEach(atom => {
-        atom.material.dispose()
-        atom.dispose()
-      })
+      try {
+        window.removeEventListener('resize', () => {
+          this.gl.engine.resize()
+        })
+        this.gl.engine.dispose()
+        this.gl.scene.dispose()
+        this.gl.molecule._children.forEach(atom => {
+          atom.material.dispose()
+          atom.dispose()
+        })
+      } catch (err) {
+        next()
+      }
       next()
     }
   }

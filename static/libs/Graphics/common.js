@@ -11,11 +11,10 @@ export default class Graphics {
     this.colorAtoms = colorAtoms
     this.assetsManager = null
     if (BABYLON.Engine.isSupported()) {
-      this.engine = new BABYLON.Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true})
+      this.engine = new BABYLON.Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true}, false)
     }
   }
   init () {
-    // this.engine.displayLoadingUI()
     this.scene = new BABYLON.Scene(this.engine)
     this.camera = new BABYLON.ArcRotateCamera('Camera', 0, 0.8, 15, new BABYLON.Vector3.Zero(), this.scene)
     this.light0 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), this.scene)
@@ -26,12 +25,12 @@ export default class Graphics {
     this.camera.lowerRadiusLimit = 10
     this.camera.upperRadiusLimit = 80
     this.camera.idleRotationSpeed = 20
-    this.camera.useAutoRotationBehavior = true
+    // this.camera.useAutoRotationBehavior = true
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
     this.gizmoManager = new BABYLON.GizmoManager(this.scene)
     this.gizmoManager.positionGizmoEnabled = true
-    this.gizmoManager.rotationGizmoEnabled = true
+    // this.gizmoManager.rotationGizmoEnabled = true
     this.gizmoManager.scaleGizmoEnabled = false
     // this.gizmoManager.dragBehavior.onDragObservable.add(() => { console.log('drag') })
     this.scene.onPointerDown = (evt, pickResult) => {
@@ -46,7 +45,6 @@ export default class Graphics {
     this.scene.render()
   }
   reedMol (data = null) {
-    // console.log(this.colorAtoms.atoms['H'])
     let bounds = []
     if (data) {
       data.forEach((atom, index) => {
@@ -57,6 +55,8 @@ export default class Graphics {
         atom3D.position.y = Number(atom[3])
         atom3D.position.z = Number(atom[4])
         atom3D.parent = this.molecule
+        atom3D.freezeWorldMatrix()
+        atom3D.doNotSyncBoundingInfo = true
         for (let i = index + 1; i < data.length; i++) {
           let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom[2], atom[3], atom[4]), new BABYLON.Vector3(data[i][2], data[i][3], data[i][4]))
           // console.log(distance)
@@ -68,13 +68,13 @@ export default class Graphics {
       })
     }
     bounds.forEach((bound) => {
-      let bond3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2], data[bound[1]][3], data[bound[1]][4], true)
-      bond3D.parent = this.molecule
+      let bond3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], true)
+      bond3D.parent = bound[2]
     })
-    // this.egine.hideLoadingUI()
     // console.log(this.molecule)
     this.engine.runRenderLoop(this.renderLoop.bind(this))
     this.gizmoManager.attachableMeshes = this.molecule._children
+    this.scene.freezeActiveMeshes()
   }
   fileGetContents (url) {
     let txt = fs.readFileSync(url, 'utf-8')
