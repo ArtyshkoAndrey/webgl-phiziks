@@ -8,6 +8,7 @@ export default class Atom {
     this.name = null
     this.connections = []
     this.Object3D = {}
+    this.deleted = false
   }
   // get position () {
   //   return new Vector3(this.x, this.y, this.z)

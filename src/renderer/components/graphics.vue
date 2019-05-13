@@ -6,8 +6,8 @@
         </div>
       </v-flex>
       <v-flex xs12 class="px-2">
-        <v-btn color="primary" block>Drag</v-btn>
-<!--        <v-btn color="primary" block @click="drag" v-else>Tick</v-btn>-->
+        <v-btn color="primary" block @click="changeMode" v-if="pointer === 'drag'">Drag</v-btn>
+        <v-btn color="primary" block @click="changeMode" v-else>Tick</v-btn>
       </v-flex>
       <!-- Создание атома -->
       <v-flex xs12 class="px-2 py-3">
@@ -22,12 +22,12 @@
                   persistent-hint
                   label="Atom name"
         ></v-select>
-        <v-btn color="success" block>Добавить</v-btn>
+        <v-btn color="success" block @click="createAtom">Добавить</v-btn>
       </v-flex>
-      <v-flex class="px-2 py-3">
+      <v-flex class="px-2 py-3" v-if="ticks > 0">
         <!-- Кнопка удаления -->
         <h4>Delete selected Atom</h4>
-        <v-btn color="error" block >Удалить</v-btn>
+        <v-btn color="error" block @click="deleteAtom">Удалить</v-btn>
       </v-flex>
     </v-layout>
     <canvas id="gl" style='z-index: 1'></canvas>
@@ -58,7 +58,7 @@
         this.$router.push('index')
       } else if (this.checkCanvas) {
         // let bgColor = this.$store.getters.dark
-        this.gl = new Graphics(this.checkCanvas)
+        this.gl = new Graphics(this.checkCanvas, this.$parent.$parent.$parent.colorAtoms)
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
         this.molecule.fileGetContents(this.$parent.path)
@@ -69,9 +69,37 @@
         })
       }
     },
+    methods: {
+      changeMode () {
+        this.gl.changeMode()
+        this.molecule.changeMode()
+      },
+      deleteAtom () {
+        this.molecule.deleteAtom()
+      },
+      createAtom () {
+        this.molecule.createAtom(this.newAtom[0])
+      }
+    },
     computed: {
       checkCanvas () {
         return document.getElementById('gl')
+      },
+      pointer () {
+        try {
+          return this.gl.pointer
+        } catch (err) {
+          console.log(err)
+          return 'tick'
+        }
+      },
+      ticks () {
+        try {
+          return this.molecule.ticks.length
+        } catch (err) {
+          console.log(err)
+          return 0
+        }
       }
     },
     beforeRouteLeave (to, from, next) {
