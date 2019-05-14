@@ -21,15 +21,11 @@ export default class Graphics {
     this.light0.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4)
     this.light0.specular = new BABYLON.Color3(0.5, 0.5, 0.5)
     this.camera.attachControl(this.canvas, true)
-    this.camera.lowerRadiusLimit = 10
+    this.camera.lowerRadiusLimit = 5
     this.camera.upperRadiusLimit = 80
     this.camera.idleRotationSpeed = 20
     this.gizmoManager = new BABYLON.GizmoManager(this.scene)
     this.gizmoManager.positionGizmoEnabled = false
-    this.scene.onPointerDown = (evt, pickResult) => {
-      this.scene.unfreezeActiveMeshes()
-      this.scene.freezeActiveMeshes()
-    }
   }
   renderLoop () {
     this.scene.render()

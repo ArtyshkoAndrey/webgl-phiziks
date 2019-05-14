@@ -13,6 +13,8 @@ class Molecule {
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
     this.scene.onPointerDown = (evt, pickResult) => {
+      this.scene.unfreezeActiveMeshes()
+      this.scene.freezeActiveMeshes()
       if (evt.button !== 0) { return }
       if (pickResult.hit && pickResult.pickedMesh && this.pointer === 'tick') {
         let mesh = pickResult.pickedMesh
@@ -104,8 +106,8 @@ class Molecule {
         this.atoms.add(tempAtom)
       })
       bounds.forEach((bound) => {
-        let bound3D2 = this.creatCyclinder(0, 0, 0, Number(data[bound[1]][2]) + 0.1 - Number(data[bound[0]][2]), Number(data[bound[1]][3]) + 0.1 - Number(data[bound[0]][3]), Number(data[bound[1]][4]) + 0.1 - Number(data[bound[0]][4]))
-        let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4])
+        let bound3D2 = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], true)
+        let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], false)
         bound3D.parent = bound[2]
         bound3D2.parent = bound[2]
       })
@@ -125,7 +127,7 @@ class Molecule {
     let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(x0, y0, z0), new BABYLON.Vector3(x1, y1, z1))
     let v = new BABYLON.Vector3(x0 - x1, y0 - y1, z0 - z1)
     let len = v.length()
-    let cylinder = BABYLON.Mesh.CreateCylinder('cylinder', distance, 0.25, 0.25, 6, 1, this.scene, false)
+    let cylinder = BABYLON.Mesh.CreateCylinder('cylinder', distance, 0.1, 0.1, 4, 1, this.scene, false)
     let material = new BABYLON.StandardMaterial('material02', this.scene)
     material.diffuseColor = new BABYLON.Color3(1, 1, 1)
     cylinder.material = material
@@ -136,13 +138,13 @@ class Molecule {
       cylinder.rotation.order = 'YZX'
     }
     if (open) {
-      cylinder.position.x = (x1 + x0) / 2 + 0.1
-      cylinder.position.y = (y1 + y0) / 2 + 0.1
-      cylinder.position.z = (z1 + z0) / 2 + 0.1
+      cylinder.position.x = (x1 + x0) / 2 + 0.07
+      cylinder.position.y = (y1 + y0) / 2 + 0.07
+      cylinder.position.z = (z1 + z0) / 2 + 0.07
     } else {
-      cylinder.position.x = (x1 + x0) / 2
-      cylinder.position.y = (y1 + y0) / 2
-      cylinder.position.z = (z1 + z0) / 2
+      cylinder.position.x = (x1 + x0) / 2 - 0.07
+      cylinder.position.y = (y1 + y0) / 2 - 0.07
+      cylinder.position.z = (z1 + z0) / 2 - 0.07
     }
     return cylinder
   }
