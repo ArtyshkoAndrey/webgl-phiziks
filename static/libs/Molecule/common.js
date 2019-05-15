@@ -98,18 +98,43 @@ class Molecule {
         this.maxNumber = index
         for (let i = index + 1; i < data.length; i++) {
           let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom[2], atom[3], atom[4]), new BABYLON.Vector3(data[i][2], data[i][3], data[i][4]))
-          if (distance <= ((this.colorAtoms[atom[1]].covalentRadius / 100) + (this.colorAtoms[data[i][1]].covalentRadius / 100))) {
-            bounds.push([index, i, atom3D])
-            tempAtom.connections.push(i)
+          let covalentRadius = (this.colorAtoms[atom[1]].covalentRadius / 100) + (this.colorAtoms[data[i][1]].covalentRadius / 100)
+          let doubleCovalentRadius = (this.colorAtoms[atom[1]].doubleCovalentRadius / 100) + (this.colorAtoms[data[i][1]].doubleCovalentRadius / 100)
+          let tripleCovalentRadius = (this.colorAtoms[atom[1]].tripleCovalentRadius / 100) + (this.colorAtoms[data[i][1]].tripleCovalentRadius / 100)
+          console.log('1: ', distance <= covalentRadius, '2: ', distance >= doubleCovalentRadius, distance, covalentRadius, doubleCovalentRadius)
+          console.log('1: ', distance <= doubleCovalentRadius, '2: ', distance > tripleCovalentRadius, distance, doubleCovalentRadius, tripleCovalentRadius)
+          // console.log('1: ', distance <= tripleCovalentRadius + 4 '2: ', distance >= tripleCovalentRadius - 4, distance, tripleCovalentRadius + 4, tripleCovalentRadius - 4)
+          console.log('------------------------')
+          if (distance <= covalentRadius && distance >= doubleCovalentRadius) { // Одинарная свяь
+            bounds.push([index, i, atom3D, 'once'])
+            tempAtom.connections.push({num: i, type: 'once'})
+          } else if (distance <= doubleCovalentRadius && distance > tripleCovalentRadius) { // Двойная свяь
+            bounds.push([index, i, atom3D, 'double'])
+            tempAtom.connections.push({num: i, type: 'double'})
+          } else if (distance <= tripleCovalentRadius + 0.05) { // Тройная свяь
+            bounds.push([index, i, atom3D, 'triple'])
+            tempAtom.connections.push({num: i, type: 'triple'})
           }
         }
         this.atoms.add(tempAtom)
       })
       bounds.forEach((bound) => {
-        let bound3D2 = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], true)
-        let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], false)
-        bound3D.parent = bound[2]
-        bound3D2.parent = bound[2]
+        if (bound[3] === 'double') {
+          let bound3D2 = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 1)
+          let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 2)
+          bound3D.parent = bound[2]
+          bound3D2.parent = bound[2]
+        } else if (bound[3] === 'once') {
+          let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 1)
+          bound3D.parent = bound[2]
+        } else if (bound[3] === 'triple') {
+          let bound3D = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 1)
+          bound3D.parent = bound[2]
+          let bound3D2 = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 2)
+          bound3D2.parent = bound[2]
+          let bound3D3 = this.creatCyclinder(0, 0, 0, data[bound[1]][2] - data[bound[0]][2], data[bound[1]][3] - data[bound[0]][3], data[bound[1]][4] - data[bound[0]][4], 3)
+          bound3D3.parent = bound[2]
+        }
       })
     }
   }
@@ -117,7 +142,7 @@ class Molecule {
     let fat = readOutFile(url)
     this.creatMolecule(fat)
   }
-  creatCyclinder (x0, y0, z0, x1, y1, z1, open) {
+  creatCyclinder (x0, y0, z0, x1, y1, z1, num) {
     x0 = Number(x0)
     y0 = Number(y0)
     z0 = Number(z0)
@@ -137,14 +162,18 @@ class Molecule {
       cylinder.rotation.y = 0.5 * Math.PI + Math.atan2(v.x, v.z)
       cylinder.rotation.order = 'YZX'
     }
-    if (open) {
-      cylinder.position.x = (x1 + x0) / 2 + 0.07
-      cylinder.position.y = (y1 + y0) / 2 + 0.07
-      cylinder.position.z = (z1 + z0) / 2 + 0.07
-    } else {
-      cylinder.position.x = (x1 + x0) / 2 - 0.07
-      cylinder.position.y = (y1 + y0) / 2 - 0.07
-      cylinder.position.z = (z1 + z0) / 2 - 0.07
+    if (num === 1) {
+      cylinder.position.x = (x1 + x0) / 2 + 0.05
+      cylinder.position.y = (y1 + y0) / 2 + 0.05
+      cylinder.position.z = (z1 + z0) / 2 + 0.05
+    } else if (num === 2) {
+      cylinder.position.x = (x1 + x0) / 2 - 0.05
+      cylinder.position.y = (y1 + y0) / 2 - 0.05
+      cylinder.position.z = (z1 + z0) / 2 - 0.05
+    } else if (num === 3) {
+      cylinder.position.x = (x1 + x0) / 2 - 0.12
+      cylinder.position.y = (y1 + y0) / 2 - 0.12
+      cylinder.position.z = (z1 + z0) / 2 - 0.12
     }
     return cylinder
   }
