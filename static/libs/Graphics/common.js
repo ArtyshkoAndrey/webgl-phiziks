@@ -10,7 +10,7 @@ export default class Graphics {
     this.pointer = 'tick'
     this.colorAtoms = colorAtoms.atoms
     if (BABYLON.Engine.isSupported()) {
-      this.engine = new BABYLON.Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true}, false)
+      this.engine = new BABYLON.Engine(this.canvas, false, {preserveDrawingBuffer: true, stencil: false}, false)
     }
   }
   init () {

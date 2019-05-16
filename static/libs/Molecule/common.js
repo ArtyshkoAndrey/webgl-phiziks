@@ -32,6 +32,7 @@ class Molecule {
   }
   createAtom (symbol) {
     this.maxNumber++
+    let bounds = []
     let atom = new Atom()
     atom.x = 0
     atom.y = 0
@@ -51,7 +52,70 @@ class Molecule {
     atom3D.metadata.name = atom.name
     atom3D.metadata.tick = false
     atom.Object3D = atom3D
+    for (let tempAtom of this.atoms) {
+      if (!tempAtom.deleted) {
+        let position = tempAtom.Object3D.position
+        let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom.x, atom.y, atom.z), position)
+        let covalentRadius = (this.colorAtoms[symbol].covalentRadius / 100) + (this.colorAtoms[tempAtom.name].covalentRadius / 100)
+        let doubleCovalentRadius = (this.colorAtoms[symbol].doubleCovalentRadius / 100) + (this.colorAtoms[tempAtom.name].doubleCovalentRadius / 100)
+        let tripleCovalentRadius = (this.colorAtoms[symbol].tripleCovalentRadius / 100) + (this.colorAtoms[tempAtom.name].tripleCovalentRadius / 100)
+        if (distance <= covalentRadius && distance >= doubleCovalentRadius) { // Одинарная свяь
+          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'once'])
+          atom.connections.push({num: tempAtom.number, type: 'once'})
+        } else if (distance <= doubleCovalentRadius && distance > tripleCovalentRadius) { // Двойная свяь
+          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'double'])
+          atom.connections.push({num: tempAtom.number, type: 'double'})
+        } else if (distance <= tripleCovalentRadius + 0.05) { // Тройная свяь
+          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'triple'])
+          atom.connections.push({num: tempAtom.number, type: 'triple'})
+        }
+      }
+    }
     this.atoms.add(atom)
+    if (bounds.length > 0) {
+      this.createBounds(bounds)
+    }
+  }
+  findAtom (num) {
+    for (let atom of this.atoms) {
+      if (atom.number === num) {
+        return atom
+      }
+    }
+    return undefined
+  }
+  createBounds (bounds) {
+    bounds.forEach((bound) => {
+      let atom = this.findAtom(bound[0])
+      let atom2 = this.findAtom(bound[1])
+      let position = atom.Object3D.position
+      let position2 = atom2.Object3D.position
+      let bound3D = this.creatCyclinder(0, 0, 0, position2.x - position.x, position2.y - position.y, position2.z - position.z, 1)
+      if (bound[3] === 'double') {
+        let bound3D2 = bound3D.clone('cylinder2')
+        bound3D2.position.x = Number(position2.x - position.x) / 2 - 0.05
+        bound3D2.position.y = Number(position2.y - position.y) / 2 - 0.05
+        bound3D2.position.z = Number(position2.z - position.z) / 2 - 0.05
+        let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2])
+        bounds3D.parent = bound[2]
+        bounds3D.metadata = {from: bound[1], to: bound[2].metadata.number}
+      } else if (bound[3] === 'once') {
+        bound3D.parent = bound[2]
+        bound3D.metadata = {from: bound[1], to: bound[2].metadata.number}
+      } else if (bound[3] === 'triple') {
+        let bound3D2 = bound3D.clone('cylinder2')
+        bound3D2.position.x = Number(position2.x - position.x) / 2 - 0.05
+        bound3D2.position.y = Number(position2.y - position.y) / 2 - 0.05
+        bound3D2.position.z = Number(position2.z - position.z) / 2 - 0.05
+        let bound3D3 = bound3D.clone('cylinder3')
+        bound3D3.position.x = Number(position2.x - position.x) / 2 - 0.12
+        bound3D3.position.y = Number(position2.y - position.y) / 2 - 0.12
+        bound3D3.position.z = Number(position2.z - position.z) / 2 - 0.12
+        let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2, bound3D3])
+        bounds3D.parent = bound[2]
+        bounds3D.metadata = {from: bound[2].metadata.number, to: bound[1]}
+      }
+    })
   }
   deleteAtom () {
     if (this.ticks.length > 0) {
@@ -113,10 +177,6 @@ class Molecule {
           let covalentRadius = (this.colorAtoms[atom[1]].covalentRadius / 100) + (this.colorAtoms[data[i][1]].covalentRadius / 100)
           let doubleCovalentRadius = (this.colorAtoms[atom[1]].doubleCovalentRadius / 100) + (this.colorAtoms[data[i][1]].doubleCovalentRadius / 100)
           let tripleCovalentRadius = (this.colorAtoms[atom[1]].tripleCovalentRadius / 100) + (this.colorAtoms[data[i][1]].tripleCovalentRadius / 100)
-          // console.log('1: ', distance <= covalentRadius, '2: ', distance >= doubleCovalentRadius, distance, covalentRadius, doubleCovalentRadius)
-          // console.log('1: ', distance <= doubleCovalentRadius, '2: ', distance > tripleCovalentRadius, distance, doubleCovalentRadius, tripleCovalentRadius)
-          // console.log('1: ', distance <= tripleCovalentRadius + 4 '2: ', distance >= tripleCovalentRadius - 4, distance, tripleCovalentRadius + 4, tripleCovalentRadius - 4)
-          // console.log('------------------------')
           if (distance <= covalentRadius && distance >= doubleCovalentRadius) { // Одинарная свяь
             bounds.push([index, i, atom3D, 'once'])
             tempAtom.connections.push({num: i, type: 'once'})
