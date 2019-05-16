@@ -7,7 +7,6 @@ export default class WikiAtom {
     this.doubleCovalentRadius = Number(doubleCovalentRadius)
     this.covalentRadius = Number(covalentRadius)
     this.tripleCovalentRadius = Number(tripleCovalentRadius)
-    console.log(doubleCovalentRadius)
   }
   clone () {
     return new WikiAtom(this.name, this.symbol, this.color, this.radius, this.covalentRadius)

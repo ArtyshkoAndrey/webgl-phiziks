@@ -60,6 +60,18 @@ class Molecule {
           atom.Object3D.material.dispose()
           atom.Object3D.dispose()
           atom.deleted = true
+          for (let tempAtom of this.atoms) {
+            console.log(tempAtom.Object3D._children)
+            if (atom.number !== tempAtom.number && tempAtom.Object3D._children !== undefined) {
+              tempAtom.Object3D._children.forEach(bound => {
+                if (bound.metadata.to === atom.number) {
+                  bound.dispose()
+                  bound.material.dispose()
+                  bound = null
+                }
+              })
+            }
+          }
         }
       }
       this.ticks = []
@@ -129,8 +141,10 @@ class Molecule {
           // bound3D2.parent = bound[2]
           let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2])
           bounds3D.parent = bound[2]
+          bounds3D.metadata = {from: bound[1], to: bound[2].metadata.number}
         } else if (bound[3] === 'once') {
           bound3D.parent = bound[2]
+          bound3D.metadata = {from: bound[1], to: bound[2].metadata.number}
         } else if (bound[3] === 'triple') {
           // bound3D.parent = bound[2]
           let bound3D2 = bound3D.clone('cylinder2')
@@ -145,6 +159,7 @@ class Molecule {
           // bound3D3.parent = bound[2]
           let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2, bound3D3])
           bounds3D.parent = bound[2]
+          bounds3D.metadata = {from: bound[2].metadata.number, to: bound[1]}
         }
       })
     }

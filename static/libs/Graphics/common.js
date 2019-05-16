@@ -26,6 +26,15 @@ export default class Graphics {
     this.camera.idleRotationSpeed = 20
     this.gizmoManager = new BABYLON.GizmoManager(this.scene)
     this.gizmoManager.positionGizmoEnabled = false
+    let options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed()
+    // console.log(options)
+    // options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1))
+    // options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1.5))
+    let optimizer = new BABYLON.SceneOptimizer(this.scene, options)
+    optimizer.start()
+    // optimizer.onFailureObservable.add(() => {
+    // console.log(optimizer.currentFrameRate)
+    // })
   }
   renderLoop () {
     this.scene.render()
