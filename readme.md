@@ -1,6 +1,6 @@
 # Программа для работы с атомами на WebGL + Поддержка MOPAC
 
-Реализованно на Vue.JS, Electron.JS, Three.JS
+Реализованно на Vue.JS, Electron.JS, Babylon.JS
 
 ## Установка
 
@@ -22,6 +22,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## Last Fixed
+### 16.05.19
+* Вся программа переделана под новый движок babylonjs
+* Добавлены настройки графики
+
 ### 12.04.19
 * Дизайн переписан под Google Material
 * Убраны утечки памяти слушателей

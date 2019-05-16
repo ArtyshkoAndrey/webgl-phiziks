@@ -1,6 +1,6 @@
 {
   "name": "webgl-phiziks",
-  "version": "0.2.3",
+  "version": "0.3.0.1",
   "author": "Fulliton <artyshko.andrey@gmail.com>",
   "description": "The program for the creation of molecules by atoms, the construction of molecules, the creation of atoms. MOPAC's functionality",
   "license": "MIT",
