@@ -48,7 +48,7 @@
     </v-toolbar>
     <v-content style="position: initial;">
       <transition name="slide-x-transition" :duration="500" mode="out-in">
-        <router-view></router-view>
+        <router-view :dark='dark' :colorAtoms='colorAtoms' :graphics='graphics'></router-view>
       </transition>
     </v-content>
   </v-app>
@@ -69,10 +69,14 @@
     mounted () {
       this.dark = this.$store.getters.dark
       this.colorAtoms = addWikiAtoms()
+      console.log(this.colorAtoms)
     },
     computed: {
       theme () {
         return this.$store.getters.dark
+      },
+      graphics () {
+        return this.$store.getters.graphics
       }
     }
   }

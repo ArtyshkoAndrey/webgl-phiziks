@@ -13,7 +13,12 @@ export default new Vuex.Store({
   ],
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    dark: true
+    dark: true,
+    graphics: {
+      antiAliasing: true,
+      quality: 4,
+      postProcessing: false
+    }
   },
   mutations: {
     dark (state, flag) {
@@ -22,13 +27,15 @@ export default new Vuex.Store({
   },
   actions: {
     setTheme ({ commit }, flag) {
-      console.log('Test')
       commit('dark', flag)
     }
   },
   getters: {
     dark: state => {
       return state.dark
+    },
+    graphics: state => {
+      return state.graphics
     }
   }
 })

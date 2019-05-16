@@ -40,6 +40,7 @@
   import fs from 'fs'
   export default {
     name: 'index',
+    props: ['colorAtoms'],
     data: () => {
       return {
         gl: null,
@@ -57,10 +58,9 @@
         this.molecule = null
         this.$router.push('index')
       } else if (this.checkCanvas) {
-        // let bgColor = this.$store.getters.dark
-        this.gl = new Graphics(this.checkCanvas, this.$parent.$parent.$parent.colorAtoms)
+        this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
-        this.molecule = new Molecule(this.gl.scene, this.$parent.$parent.$parent.colorAtoms)
+        this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
         this.molecule.fileGetContents(this.$parent.path)
         this.gl.newMolecule = this.molecule.molecule
         this.gl.startRender()

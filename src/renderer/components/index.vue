@@ -18,18 +18,27 @@
       <v-flex md3 xs12>
         <h2>Settings</h2>
         <a href='#' @click="openThemeModal" class="my-2">Select Theme</a>
+        <br>
+        <a href='#' @click="openGraphicsModal" class="my-2">Graphics settings</a>
       </v-flex>
-      <themeModal ref='theme'></themeModal>
+      <themeModal ref='theme' :dark='dark'></themeModal>
+      <GraphicsModal ref='graphics' :graphics='graphics'></GraphicsModal>
     </v-layout>
   </v-container>
 </template>
 
 <script>
   import theme from './settings/theme.vue'
+  import graphics from './settings/graphics.vue'
   export default {
     name: 'index',
+    props: ['dark', 'graphics'],
     components: {
-      'themeModal': theme
+      'themeModal': theme,
+      'GraphicsModal': graphics
+    },
+    mounted () {
+      console.log('Index.vue dark:', this.dark)
     },
     methods: {
       openFile: function () {
@@ -43,6 +52,9 @@
       },
       openThemeModal () {
         this.$refs.theme.open()
+      },
+      openGraphicsModal () {
+        this.$refs.graphics.open()
       }
     }
   }

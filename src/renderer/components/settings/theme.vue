@@ -4,7 +4,7 @@
     <v-card>
       <v-card-title class="headline">Choose theme</v-card-title>
       <v-card-text>
-        <v-radio-group v-model="theme">
+        <v-radio-group v-model="localDark">
           <v-radio
             label="Dark Theme"
             :value="true"
@@ -28,25 +28,27 @@
 <script>
   export default {
     name: 'theme',
+    props: {
+      dark: Boolean
+    },
     data: () => {
       return {
-        theme: true,
-        dialog: false
+        dialog: false,
+        localDark: null
       }
+    },
+    mounted () {
+      this.localDark = this.dark
     },
     methods: {
       open () {
         this.dialog = true
       }
     },
-    mounted () {
-      this.theme = this.$store.getters.dark
-      console.log(this.theme)
-    },
     watch: {
-      theme: function (n, old) {
-        this.$store.dispatch('setTheme', this.theme)
-        console.log(this.$store.getters.dark)
+      localDark: function (n, old) {
+        this.$store.dispatch('setTheme', this.localDark)
+        console.log('В theme.vue dark: ', this.$store.getters.dark)
       }
     }
   }
