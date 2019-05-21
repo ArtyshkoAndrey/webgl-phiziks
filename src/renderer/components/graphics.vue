@@ -29,6 +29,9 @@
         <h4>Delete selected Atom</h4>
         <v-btn color="error" block @click="deleteAtom">Удалить</v-btn>
       </v-flex>
+      <v-flex class="px-2 py-1" v-if="ticks === 2">
+        <v-btn color="success" block @click="connectAtom">Соединить</v-btn>
+      </v-flex>
     </v-layout>
     <canvas id="gl" style='z-index: 1'></canvas>
   </v-container>
@@ -52,7 +55,17 @@
       }
     },
     mounted () {
-      if (this.$parent.path === '' || !fs.existsSync(this.$parent.path)) {
+      if (this.$parent.path === false) {
+        this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
+        this.gl.init()
+        this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
+        // this.molecule.fileGetContents(this.$parent.path)
+        this.gl.newMolecule = this.molecule.molecule
+        this.gl.startRender()
+        window.addEventListener('resize', () => {
+          this.gl.engine.resize()
+        })
+      } else if (this.$parent.path === '' || !fs.existsSync(this.$parent.path)) {
         this.$parent.path = ''
         this.gl = null
         this.molecule = null
@@ -70,6 +83,9 @@
       }
     },
     methods: {
+      connectAtom () {
+        this.molecule.connectAtom()
+      },
       changeMode () {
         this.gl.changeMode()
         this.molecule.changeMode()
