@@ -38,7 +38,7 @@
       }
     },
     mounted () {
-      this.localDark = this.dark
+      this.localDark = this.$store.getters.dark
     },
     methods: {
       open () {
