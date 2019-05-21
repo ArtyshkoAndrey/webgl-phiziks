@@ -120,6 +120,10 @@
       },
       createAtom () {
         this.molecule.createAtom(this.newAtom[0])
+        this.color = 'success'
+        this.text = 'Atom created'
+        this.timeout = 2000
+        this.snackbar = true
       }
     },
     computed: {
