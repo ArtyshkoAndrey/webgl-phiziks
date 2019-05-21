@@ -22,6 +22,12 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## Last Fixed
+### 22.05.19
+* Добавлены уведомления
+* Исправлавлены ошибки при создании сцены без молекулы
+* Убрано выделения соединения
+* Исправлено падения приложения когда открываешь graphics.vue без файла
+
 ### 16.05.19
 * Вся программа переделана под новый движок babylonjs
 * Добавлены настройки графики
