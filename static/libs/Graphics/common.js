@@ -53,6 +53,7 @@ export default class Graphics {
   }
   startRender () {
     this.engine.runRenderLoop(this.renderLoop.bind(this))
+    this.molecule._children = []
     this.gizmoManager.attachableMeshes = this.molecule._children
   }
 }
