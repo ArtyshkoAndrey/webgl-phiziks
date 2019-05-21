@@ -30,6 +30,11 @@ class Molecule {
       }
     }
   }
+  connectAtom () {
+    if (this.ticks.length === 2) {
+      return console.log(this.ticks)
+    }
+  }
   createAtom (symbol) {
     this.maxNumber++
     let bounds = []
@@ -39,7 +44,7 @@ class Molecule {
     atom.z = 0
     atom.name = symbol
     atom.number = this.maxNumber
-    let atom3D = new BABYLON.Mesh.CreateSphere(atom[1], 16, this.colorAtoms[atom.name].radius / 100, this.scene)
+    let atom3D = new BABYLON.Mesh.CreateSphere(symbol, 16, this.colorAtoms[atom.name].radius / 100, this.scene)
     atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
     atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[atom.name].color)
     atom3D.position.x = atom.x
