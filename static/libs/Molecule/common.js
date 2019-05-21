@@ -97,9 +97,11 @@ class Molecule {
         bound3D2.position.y = Number(position2.y - position.y) / 2 - 0.05
         bound3D2.position.z = Number(position2.z - position.z) / 2 - 0.05
         let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2])
+        bounds3D.name = 'cylinder'
         bounds3D.parent = bound[2]
         bounds3D.metadata = {from: bound[1], to: bound[2].metadata.number}
       } else if (bound[3] === 'once') {
+        bound3D.name = 'cylinder'
         bound3D.parent = bound[2]
         bound3D.metadata = {from: bound[1], to: bound[2].metadata.number}
       } else if (bound[3] === 'triple') {
@@ -112,6 +114,7 @@ class Molecule {
         bound3D3.position.y = Number(position2.y - position.y) / 2 - 0.12
         bound3D3.position.z = Number(position2.z - position.z) / 2 - 0.12
         let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2, bound3D3])
+        bounds3D.name = 'cylinder'
         bounds3D.parent = bound[2]
         bounds3D.metadata = {from: bound[2].metadata.number, to: bound[1]}
       }
@@ -200,10 +203,12 @@ class Molecule {
           bound3D2.position.z = Number(data[bound[1]][4] - data[bound[0]][4]) / 2 - 0.05
           // bound3D2.parent = bound[2]
           let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2])
+          bounds3D.name = 'cylinder'
           bounds3D.parent = bound[2]
           bounds3D.metadata = {from: bound[1], to: bound[2].metadata.number}
         } else if (bound[3] === 'once') {
           bound3D.parent = bound[2]
+          bound3D.name = 'cylinder'
           bound3D.metadata = {from: bound[1], to: bound[2].metadata.number}
         } else if (bound[3] === 'triple') {
           // bound3D.parent = bound[2]
@@ -218,6 +223,7 @@ class Molecule {
           bound3D3.position.z = Number(data[bound[1]][4] - data[bound[0]][4]) / 2 - 0.12
           // bound3D3.parent = bound[2]
           let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2, bound3D3])
+          bounds3D.name = 'cylinder'
           bounds3D.parent = bound[2]
           bounds3D.metadata = {from: bound[2].metadata.number, to: bound[1]}
         }
