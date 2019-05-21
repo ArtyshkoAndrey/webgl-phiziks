@@ -1,5 +1,22 @@
 <template>
   <v-container fluid style="padding: 0; position: initial;">
+    <v-snackbar
+            v-model="snackbar"
+            :color="color"
+            :multi-line=true
+            :timeout="timeout"
+            :top=true
+            :right=true
+    >
+      {{ text }}
+      <v-btn
+              dark
+              flat
+              @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-layout row wrap style="width: 150px; z-index: 10">
       <v-flex md12 xs12 class="px-2">
         <div id="InfoForAtom">
@@ -51,7 +68,11 @@
         dragControls: null,
         events: [],
         newAtom: null,
-        dragAndTick: false
+        dragAndTick: false,
+        snackbar: false,
+        timeout: 2000,
+        text: '',
+        color: null
       }
     },
     mounted () {
@@ -89,6 +110,10 @@
       changeMode () {
         this.gl.changeMode()
         this.molecule.changeMode()
+        this.color = 'info'
+        this.text = 'Mode has changed'
+        this.timeout = 1000
+        this.snackbar = true
       },
       deleteAtom () {
         this.molecule.deleteAtom()
