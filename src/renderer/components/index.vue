@@ -4,8 +4,9 @@
       <v-flex md3 xs12>
         <h2>Start</h2>
         <input id="openfile" type='file' accept='.out' style='display: none'/>
-        <p class="primary--text mt-2 pb-0 mb-0">New project</p>
-        <a href="#" @click="openFile">Open File</a>
+        <a href="#" @click="openFile(false)">New Project</a>
+        <br>
+        <a href="#" @click="openFile(true)">Open File</a>
       </v-flex>
       <v-flex md3 xs12>
         <h2>Help</h2>
@@ -41,14 +42,19 @@
       console.log('Index.vue dark:', this.dark)
     },
     methods: {
-      openFile: function () {
-        let chooser = document.querySelector('#openfile')
-        chooser.click()
-        // this.$parent.status = true
-        chooser.addEventListener('change', (evt) => {
-          this.$parent.path = document.querySelector('#openfile').files[0].path
+      openFile (pr) {
+        if (pr === false) {
+          this.$parent.path = false
           this.$router.push('graphics')
-        })
+        } else {
+          let chooser = document.querySelector('#openfile')
+          chooser.click()
+          // this.$parent.status = true
+          chooser.addEventListener('change', (evt) => {
+            this.$parent.path = document.querySelector('#openfile').files[0].path
+            this.$router.push('graphics')
+          })
+        }
       },
       openThemeModal () {
         this.$refs.theme.open()
