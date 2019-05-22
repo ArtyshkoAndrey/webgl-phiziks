@@ -56,6 +56,7 @@
 
 <script>
   import { addWikiAtoms } from './../../static/libs/functions.js'
+  // import exec from 'executive'
   export default {
     name: 'gl',
     data: () => {

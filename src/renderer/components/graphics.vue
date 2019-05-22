@@ -58,6 +58,7 @@
   import Graphics from '../../../static/libs/Graphics/common.js'
   import Molecule from '../../../static/libs/Molecule/common.js'
   import fs from 'fs'
+  import exec from 'executive'
   export default {
     name: 'index',
     props: ['colorAtoms'],
@@ -92,6 +93,13 @@
         this.molecule = null
         this.$router.push('index')
       } else if (this.checkCanvas) {
+        exec('cd ' + this.$parent.path, (err, stdout, stderr) => {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log(stderr)
+          }
+        })
         this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
