@@ -3,7 +3,7 @@ import * as BABYLON from 'babylonjs'
 import { readOutFile } from '../functions.js'
 import Atom from '../../Atom.js'
 class Molecule {
-  constructor (scene, colorAtoms) {
+  constructor (scene, colorAtoms, babelResult = null) {
     this.scene = scene
     this.atoms = new Set()
     this.colorAtoms = colorAtoms.atoms
@@ -12,6 +12,7 @@ class Molecule {
     this.maxNumber = 0
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
+    this.babelResult = babelResult
     this.scene.onPointerDown = (evt, pickResult) => {
       this.scene.unfreezeActiveMeshes()
       this.scene.freezeActiveMeshes()

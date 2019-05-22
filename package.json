@@ -62,7 +62,8 @@
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.9",
     "vuex": "^3.1.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "ajv": "^6.5.0",

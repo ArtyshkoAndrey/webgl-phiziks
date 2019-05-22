@@ -21,6 +21,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+## TODO
+* Добавить удаление звязи когда удаляется атом к которому идёт соединение
+* Сделать создание соединений по openbabel
+
 ## Last Fixed
 ### 22.05.19
 * Добавлены уведомления

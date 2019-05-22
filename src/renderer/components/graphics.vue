@@ -93,16 +93,28 @@
         this.molecule = null
         this.$router.push('index')
       } else if (this.checkCanvas) {
-        exec('cd ' + this.$parent.path, (err, stdout, stderr) => {
+        let arrayPath = this.$parent.path.split('\\')
+        let nameFile = arrayPath.pop()
+        let babelResult = null
+        exec.sync('babel ' + nameFile + ' -ocml -as', {cwd: arrayPath.join('\\')}, (err, stdout, stderr) => {
           if (err) {
-            console.log(err)
+            this.color = 'error'
+            this.text = 'OpenBabel is not install'
+            this.timeout = 5000
+            this.snackbar = true
           } else {
-            console.log(stderr)
+            let parseString = require('xml2js').parseString
+            parseString(stdout, {trim: true, normalize: true, explicitArray: false, preserveChildrenOrder: true, explicitCharkey: true}, (err, result) => {
+              if (err) {
+                return new Error('Lol')
+              }
+              babelResult = result
+            })
           }
         })
         this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
-        this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
+        this.molecule = new Molecule(this.gl.scene, this.colorAtoms, babelResult)
         this.molecule.fileGetContents(this.$parent.path)
         this.gl.newMolecule = this.molecule.molecule
         this.gl.startRender()
