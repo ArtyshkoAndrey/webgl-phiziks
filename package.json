@@ -55,6 +55,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babylonjs": "^3.3.0",
+    "executive": "^1.6.3",
     "template-html-loader": "^1.0.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
