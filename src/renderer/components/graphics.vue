@@ -58,7 +58,6 @@
   import Graphics from '../../../static/libs/Graphics/common.js'
   import Molecule from '../../../static/libs/Molecule/common.js'
   import fs from 'fs'
-  import exec from 'executive'
   export default {
     name: 'index',
     props: ['colorAtoms'],
@@ -93,28 +92,9 @@
         this.molecule = null
         this.$router.push('index')
       } else if (this.checkCanvas) {
-        let arrayPath = this.$parent.path.split('\\')
-        let nameFile = arrayPath.pop()
-        let babelResult = null
-        exec.sync('babel ' + nameFile + ' -ocml -as', {cwd: arrayPath.join('\\')}, (err, stdout, stderr) => {
-          if (err) {
-            this.color = 'error'
-            this.text = 'OpenBabel is not install'
-            this.timeout = 5000
-            this.snackbar = true
-          } else {
-            let parseString = require('xml2js').parseString
-            parseString(stdout, {trim: true, normalize: true, explicitArray: false, preserveChildrenOrder: true, explicitCharkey: true}, (err, result) => {
-              if (err) {
-                return new Error('Lol')
-              }
-              babelResult = result
-            })
-          }
-        })
         this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
-        this.molecule = new Molecule(this.gl.scene, this.colorAtoms, babelResult)
+        this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
         this.molecule.fileGetContents(this.$parent.path)
         this.gl.newMolecule = this.molecule.molecule
         this.gl.startRender()

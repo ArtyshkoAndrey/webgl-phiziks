@@ -1,6 +1,7 @@
 'use strict'
 export default class Atom {
   constructor () {
+    this.id = null
     this.number = null
     this.x = null
     this.y = null
