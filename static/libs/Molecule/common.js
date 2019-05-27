@@ -20,6 +20,7 @@ class Molecule {
       if (evt.button !== 0) { return }
       if (pickResult.hit && pickResult.pickedMesh && this.pointer === 'tick') {
         let mesh = pickResult.pickedMesh
+        console.log(mesh.parent)
         if (mesh.name !== 'cylinder') {
           if (mesh.material.diffuseColor.r === 1 && mesh.material.diffuseColor.g === 0 && mesh.material.diffuseColor.b === 0) {
             mesh.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[mesh.metadata.name].color)
@@ -125,6 +126,7 @@ class Molecule {
         bound3D2.position.y = Number(position2.y - position.y) / 2 - 0.05
         bound3D2.position.z = Number(position2.z - position.z) / 2 - 0.05
         let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2])
+        bounds3D.material.diffuseColor = new BABYLON.Color3.FromHexString('#747474')
         bounds3D.name = 'cylinder'
         bounds3D.parent = atom.Object3D
         bounds3D.metadata = {from: atom.number, to: atom2.number}
@@ -132,7 +134,7 @@ class Molecule {
         bound3D.name = 'cylinder'
         bound3D.parent = atom.Object3D
         bound3D.metadata = {from: atom.number, to: atom2.number}
-      } else if (bound[3] === '3') {
+      } else if (bound[2] === '3') {
         let bound3D2 = bound3D.clone('cylinder2')
         bound3D2.position.x = Number(position2.x - position.x) / 2 - 0.05
         bound3D2.position.y = Number(position2.y - position.y) / 2 - 0.05
@@ -142,8 +144,10 @@ class Molecule {
         bound3D3.position.y = Number(position2.y - position.y) / 2 - 0.12
         bound3D3.position.z = Number(position2.z - position.z) / 2 - 0.12
         let bounds3D = BABYLON.Mesh.MergeMeshes([bound3D, bound3D2, bound3D3])
+        bounds3D.material.diffuseColor = new BABYLON.Color3.FromHexString('#494848')
         bounds3D.name = 'cylinder'
         bounds3D.parent = atom.Object3D
+        console.log(atom)
         bounds3D.metadata = {from: atom.number, to: atom2.number}
       }
     })
@@ -217,7 +221,6 @@ class Molecule {
     }
   }
   fileGetContents (url) {
-    // let fat = readOutFile(url)
     let fat = this.babelData(url)
     this.creatMolecule(fat)
   }
