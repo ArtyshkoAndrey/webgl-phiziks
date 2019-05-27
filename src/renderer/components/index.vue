@@ -3,7 +3,7 @@
     <v-layout align-center justify-center row wrap fill-height>
       <v-flex md3 xs12>
         <h2>Start</h2>
-        <input id="openfile" type='file' accept='.out' style='display: none'/>
+        <input id="openfile" type='file' style='display: none'/>
         <a href="#" @click="openFile(false)">New Project</a>
         <br>
         <a href="#" @click="openFile(true)">Open File</a>
