@@ -1,6 +1,6 @@
 'use strict'
 import * as BABYLON from 'babylonjs'
-// import { readOutFile } from '../functions.js'
+import fs from 'fs'
 import Atom from '../../Atom.js'
 import exec from 'executive'
 // TODO Везде пиреписать BOUND BOUNDS на BOND BONDS
@@ -12,6 +12,7 @@ class Molecule {
     this.ticks = []
     this.pointer = 'tick'
     this.maxNumber = 0
+    this.textFile = ''
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
     this.scene.onPointerDown = (evt, pickResult) => {
@@ -33,25 +34,47 @@ class Molecule {
       }
     }
   }
-  babelData (path) {
-    let arrayPath = path.split('\\')
-    let nameFile = arrayPath.pop()
-    let babelResult = null
-    exec.sync('babel ' + nameFile + ' -ocml', {cwd: arrayPath.join('\\')}, (err, stdout, stderr) => {
-      if (err) {
-        console.log(new Error('Lol'))
-      } else {
-        console.log(stderr)
-        let parseString = require('xml2js').parseString
-        parseString(stdout, {trim: true, normalize: true, explicitArray: false, preserveChildrenOrder: true, explicitCharkey: true}, (err, result) => {
-          if (err) {
-            return new Error('Lol')
-          }
-          babelResult = result
-        })
-      }
-    })
-    return babelResult.molecule
+  babelData (path = null, saveData = false, getData = false) {
+    if (getData) {
+      fs.readFile(path, 'utf8', (err, contents) => {
+        if (err) {
+          console.log(err)
+        } else {
+          this.textFile = contents
+        }
+        console.log(this.textFile)
+      })
+    }
+    if (saveData) {
+      console.log('saved')
+    }
+    if (path) {
+      let arrayPath = path.split('\\')
+      let nameFile = arrayPath.pop()
+      let babelResult = null
+      exec.sync('babel ' + nameFile + ' -ocml', {cwd: arrayPath.join('\\')}, (err, stdout, stderr) => {
+        if (err) {
+          console.log(new Error('Lol'))
+        } else {
+          console.log(stderr)
+          let parseString = require('xml2js').parseString
+          parseString(stdout, {
+            trim: true,
+            normalize: true,
+            explicitArray: false,
+            preserveChildrenOrder: true,
+            explicitCharkey: true
+          }, (err, result) => {
+            if (err) {
+              return new Error('Lol')
+            }
+            babelResult = result
+          })
+        }
+      })
+      return babelResult.molecule
+    }
+    return null
   }
   connectAtom () {
     if (this.ticks.length === 2) {
@@ -70,7 +93,7 @@ class Molecule {
     atom.number = this.maxNumber
     let atom3D = new BABYLON.Mesh.CreateSphere(symbol, 16, this.colorAtoms[atom.name].radius / 100, this.scene)
     atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
-    atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[atom.name].color)
+    atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[symbol].color)
     atom3D.position.x = atom.x
     atom3D.position.y = atom.y
     atom3D.position.z = atom.z
@@ -81,25 +104,6 @@ class Molecule {
     atom3D.metadata.name = atom.name
     atom3D.metadata.tick = false
     atom.Object3D = atom3D
-    for (let tempAtom of this.atoms) {
-      if (!tempAtom.deleted) {
-        let position = tempAtom.Object3D.position
-        let distance = BABYLON.Vector3.Distance(new BABYLON.Vector3(atom.x, atom.y, atom.z), position)
-        let covalentRadius = (this.colorAtoms[symbol].covalentRadius / 100) + (this.colorAtoms[tempAtom.name].covalentRadius / 100)
-        let doubleCovalentRadius = (this.colorAtoms[symbol].doubleCovalentRadius / 100) + (this.colorAtoms[tempAtom.name].doubleCovalentRadius / 100)
-        let tripleCovalentRadius = (this.colorAtoms[symbol].tripleCovalentRadius / 100) + (this.colorAtoms[tempAtom.name].tripleCovalentRadius / 100)
-        if (distance <= covalentRadius && distance >= doubleCovalentRadius) { // Одинарная свяь
-          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'once'])
-          atom.connections.push({num: tempAtom.number, type: 'once'})
-        } else if (distance <= doubleCovalentRadius && distance > tripleCovalentRadius) { // Двойная свяь
-          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'double'])
-          atom.connections.push({num: tempAtom.number, type: 'double'})
-        } else if (distance <= tripleCovalentRadius + 0.05) { // Тройная свяь
-          bounds.push([atom.number, tempAtom.number, atom.Object3D, 'triple'])
-          atom.connections.push({num: tempAtom.number, type: 'triple'})
-        }
-      }
-    }
     this.atoms.add(atom)
     if (bounds.length > 0) {
       this.createBounds(bounds)

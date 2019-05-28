@@ -95,7 +95,7 @@
         this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
-        this.molecule.fileGetContents(this.$parent.path)
+        this.molecule.creatMolecule(this.molecule.babelData(this.$parent.path, true, true))
         this.gl.newMolecule = this.molecule.molecule
         this.gl.startRender()
         window.addEventListener('resize', () => {
@@ -112,11 +112,15 @@
         this.molecule.changeMode()
         this.color = 'info'
         this.text = 'Mode has changed'
-        this.timeout = 1000
+        this.timeout = 2000
         this.snackbar = true
       },
       deleteAtom () {
         this.molecule.deleteAtom()
+        this.color = 'success'
+        this.text = 'Atom(s) deleted'
+        this.timeout = 2000
+        this.snackbar = true
       },
       createAtom () {
         this.molecule.createAtom(this.newAtom[0])
@@ -124,6 +128,7 @@
         this.text = 'Atom created'
         this.timeout = 2000
         this.snackbar = true
+        console.log(123)
       }
     },
     computed: {
