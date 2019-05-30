@@ -95,7 +95,7 @@
         this.gl = new Graphics(this.checkCanvas, this.colorAtoms)
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
-        this.molecule.creatMolecule(this.molecule.babelData(this.$parent.path, true, true))
+        this.molecule.creatMolecule(this.molecule.babelData(this.$parent.path))
         this.gl.newMolecule = this.molecule.molecule
         this.gl.startRender()
         window.addEventListener('resize', () => {
@@ -128,7 +128,6 @@
         this.text = 'Atom created'
         this.timeout = 2000
         this.snackbar = true
-        console.log(123)
       }
     },
     computed: {

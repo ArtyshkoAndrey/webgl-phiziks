@@ -12,7 +12,8 @@ class Molecule {
     this.ticks = []
     this.pointer = 'tick'
     this.maxNumber = 0
-    this.textFile = ''
+    this.bonds = new Set()
+    this.textFile = null
     this.molecule = new BABYLON.Mesh.CreateSphere('Sphere', 16, 0, this.scene)
     this.molecule.isVisible = false
     this.scene.onPointerDown = (evt, pickResult) => {
@@ -21,7 +22,6 @@ class Molecule {
       if (evt.button !== 0) { return }
       if (pickResult.hit && pickResult.pickedMesh && this.pointer === 'tick') {
         let mesh = pickResult.pickedMesh
-        console.log(mesh.parent)
         if (mesh.name !== 'cylinder') {
           if (mesh.material.diffuseColor.r === 1 && mesh.material.diffuseColor.g === 0 && mesh.material.diffuseColor.b === 0) {
             mesh.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[mesh.metadata.name].color)
@@ -34,25 +34,55 @@ class Molecule {
       }
     }
   }
-  babelData (path = null, saveData = false, getData = false) {
-    if (getData) {
-      fs.readFile(path, 'utf8', (err, contents) => {
-        if (err) {
-          console.log(err)
-        } else {
-          this.textFile = contents
+  async saveDataFile () {
+    let path = this.pathWithoutFile + '\\' + this.nameFile.split('.')[0] + '.mop'
+    console.log(path)
+    fs.open(path, 'w', (err, fd) => {
+      if (err) {
+        return console.log(err)
+      }
+      delete this.textFile.molecule.bondArray
+      console.log(this.textFile)
+      let text = []
+      text.push('')
+      text.push(this.nameFile.split('.')[0] + '')
+      text.push('')
+      for (let atom of this.atoms) {
+        if (!atom.deleted) {
+          console.log(atom)
+          let temp = ''
+          temp += atom.name.toUpperCase() + ' ' + atom.Object3D.position.x + ' 1 ' + atom.Object3D.position.y + ' 1 ' + atom.Object3D.position.z + ' 1 '
+          text.push(temp)
         }
-        console.log(this.textFile)
+      }
+      text = text.join('\n')
+      console.log(text)
+      fs.writeFile(path, text, err => {
+        if (err) return new Error('Error save data')
       })
-    }
-    if (saveData) {
-      console.log('saved')
-    }
+      fs.close(fd, err => {
+        if (err) return new Error('Error save data')
+        let data = this.babelData(path)
+        let bonds = []
+        data.bondArray.bond.forEach((bond, index) => {
+          bond = bond.$
+          let ids = bond.atomRefs2.split(' ')
+          bonds.push([ids[0], ids[1], bond.order])
+        })
+        this.createBounds(bonds)
+      })
+    })
+  }
+  babelData (path = null) {
     if (path) {
       let arrayPath = path.split('\\')
       let nameFile = arrayPath.pop()
+      this.nameFile = nameFile
+      let pathWithoutFile = arrayPath.join('\\')
+      this.pathWithoutFile = pathWithoutFile
       let babelResult = null
-      exec.sync('babel ' + nameFile + ' -ocml', {cwd: arrayPath.join('\\')}, (err, stdout, stderr) => {
+      console.log(nameFile, pathWithoutFile)
+      exec.sync('babel ' + nameFile + ' -ocml', {cwd: pathWithoutFile}, (err, stdout, stderr) => {
         if (err) {
           console.log(new Error('Lol'))
         } else {
@@ -72,6 +102,7 @@ class Molecule {
           })
         }
       })
+      this.textFile = babelResult
       return babelResult.molecule
     }
     return null
@@ -84,13 +115,13 @@ class Molecule {
   // TODO Переисать bond
   createAtom (symbol) {
     this.maxNumber++
-    let bounds = []
     let atom = new Atom()
     atom.x = 0
     atom.y = 0
     atom.z = 0
     atom.name = symbol
     atom.number = this.maxNumber
+    atom.id = 'a' + (this.maxNumber + 1)
     let atom3D = new BABYLON.Mesh.CreateSphere(symbol, 16, this.colorAtoms[atom.name].radius / 100, this.scene)
     atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
     atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[symbol].color)
@@ -105,9 +136,7 @@ class Molecule {
     atom3D.metadata.tick = false
     atom.Object3D = atom3D
     this.atoms.add(atom)
-    if (bounds.length > 0) {
-      this.createBounds(bounds)
-    }
+    this.saveDataFile()
   }
   findAtom (id) {
     for (let atom of this.atoms) {
@@ -133,11 +162,13 @@ class Molecule {
         bounds3D.material.diffuseColor = new BABYLON.Color3.FromHexString('#747474')
         bounds3D.name = 'cylinder'
         bounds3D.parent = atom.Object3D
-        bounds3D.metadata = {from: atom.number, to: atom2.number}
+        bounds3D.metadata = {from: atom.id, to: atom2.id}
+        this.bonds.add(bounds3D)
       } else if (bound[2] === '1') {
         bound3D.name = 'cylinder'
         bound3D.parent = atom.Object3D
-        bound3D.metadata = {from: atom.number, to: atom2.number}
+        bound3D.metadata = {from: atom.id, to: atom2.id}
+        this.bonds.add(bound3D)
       } else if (bound[2] === '3') {
         let bound3D2 = bound3D.clone('cylinder2')
         bound3D2.position.x = Number(position2.x - position.x) / 2 - 0.05
@@ -151,8 +182,8 @@ class Molecule {
         bounds3D.material.diffuseColor = new BABYLON.Color3.FromHexString('#494848')
         bounds3D.name = 'cylinder'
         bounds3D.parent = atom.Object3D
-        console.log(atom)
-        bounds3D.metadata = {from: atom.number, to: atom2.number}
+        bounds3D.metadata = {from: atom.id, to: atom2.id}
+        this.bonds.add(bounds3D)
       }
     })
   }
