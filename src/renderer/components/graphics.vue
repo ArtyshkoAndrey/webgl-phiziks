@@ -49,6 +49,9 @@
       <v-flex class="px-2 py-1" v-if="ticks === 2">
         <v-btn color="success" block @click="connectAtom">Соединить</v-btn>
       </v-flex>
+      <v-flex class="px-2 py-1">
+        <v-btn color="success" block @click="saveMolecule">Сохранить</v-btn>
+      </v-flex>
     </v-layout>
     <canvas id="gl" style='z-index: 1'></canvas>
   </v-container>
@@ -81,7 +84,7 @@
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
         // this.molecule.fileGetContents(this.$parent.path)
-        this.gl.newMolecule = this.molecule.molecule
+        this.gl.newMolecule = this.molecule
         this.gl.startRender()
         window.addEventListener('resize', () => {
           this.gl.engine.resize()
@@ -96,7 +99,7 @@
         this.gl.init()
         this.molecule = new Molecule(this.gl.scene, this.colorAtoms)
         this.molecule.creatMolecule(this.molecule.babelData(this.$parent.path))
-        this.gl.newMolecule = this.molecule.molecule
+        this.gl.newMolecule = this.molecule
         this.gl.startRender()
         window.addEventListener('resize', () => {
           this.gl.engine.resize()
@@ -104,6 +107,13 @@
       }
     },
     methods: {
+      saveMolecule () {
+        this.molecule.saveDataFile()
+        this.color = 'info'
+        this.text = 'Molecule saved'
+        this.timeout = 2000
+        this.snackbar = true
+      },
       connectAtom () {
         this.molecule.connectAtom()
       },

@@ -5,7 +5,7 @@ function addWikiAtoms () {
   wa.add('Helium', 'He', '#00FFFF', 31, 30, 28, 25)
   wa.add('Lithium', 'Li', '#FFA07A', 145, 142, 134, 121)
   wa.add('Beryllium', 'Be', '#FFA500', 112, 99, 90, 81)
-  wa.add('Borum', 'Bo', '#CD853F', 98, 90, 82, 74)
+  wa.add('Borum', 'B', '#CD853F', 98, 90, 82, 74)
   wa.add('Carboneum', 'C', '#32CD32', 77, 84, 77, 70)
   wa.add('Nitrogenium', 'N', '#2E8B57', 92, 82, 75, 68)
   wa.add('Oxygenium', 'O', '#00FA9A', 60, 80, 73, 66)

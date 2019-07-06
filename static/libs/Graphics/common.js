@@ -26,6 +26,7 @@ export default class Graphics {
     this.camera.idleRotationSpeed = 20
     this.gizmoManager = new BABYLON.GizmoManager(this.scene)
     this.gizmoManager.positionGizmoEnabled = false
+
     let options = BABYLON.SceneOptimizerOptions.LowDegradationAllowed()
     // console.log(options)
     // options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1))
@@ -46,6 +47,10 @@ export default class Graphics {
     if (this.pointer === 'tick') {
       this.pointer = 'drag'
       this.gizmoManager.positionGizmoEnabled = true
+      this.gizmoManager.gizmos.positionGizmo.onDragEndObservable.add(() => {
+        console.log(this.molecule)
+        this.molecule.saveDataFile()
+      })
     } else {
       this.pointer = 'tick'
       this.gizmoManager.positionGizmoEnabled = false
@@ -53,9 +58,9 @@ export default class Graphics {
   }
   startRender () {
     this.engine.runRenderLoop(this.renderLoop.bind(this))
-    if (typeof this.molecule._children === 'undefined') {
-      this.molecule._children = []
+    if (typeof this.molecule.molecule._children === 'undefined') {
+      this.molecule.molecule._children = []
     }
-    this.gizmoManager.attachableMeshes = this.molecule._children
+    this.gizmoManager.attachableMeshes = this.molecule.molecule._children
   }
 }
