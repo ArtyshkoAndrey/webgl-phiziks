@@ -39,18 +39,18 @@
                   persistent-hint
                   label="Atom name"
         ></v-select>
-        <v-btn color="success" block @click="createAtom">Добавить</v-btn>
+        <v-btn color="success" block @click="createAtom">Add</v-btn>
       </v-flex>
       <v-flex class="px-2 py-3" v-if="ticks > 0">
         <!-- Кнопка удаления -->
         <h4>Delete selected Atom</h4>
-        <v-btn color="error" block @click="deleteAtom">Удалить</v-btn>
+        <v-btn color="error" block @click="deleteAtom">Delete</v-btn>
       </v-flex>
       <v-flex class="px-2 py-1" v-if="ticks === 2">
-        <v-btn color="success" block @click="connectAtom">Соединить</v-btn>
+        <v-btn color="success" block @click="connectAtom">Connect</v-btn>
       </v-flex>
       <v-flex class="px-2 py-1">
-        <v-btn color="success" block @click="saveMolecule">Сохранить</v-btn>
+        <v-btn color="success" block @click="saveMolecule">Save</v-btn>
       </v-flex>
     </v-layout>
     <canvas id="gl" style='z-index: 1'></canvas>
