@@ -261,39 +261,82 @@ class Molecule {
   }
   creatMolecule (data = null) {
     if (data) {
+      console.log(data)
       let bonds = []
-      data.atomArray.atom.forEach((atom, index) => {
-        atom = atom.$
-        let tempAtom = new Atom()
-        let atom3D = new BABYLON.Mesh.CreateSphere(atom[1], 16, this.colorAtoms[atom.elementType].radius / 100, this.scene)
-        atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
-        atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[atom.elementType].color)
-        atom3D.position.x = Number(atom.x3)
-        atom3D.position.y = Number(atom.y3)
-        atom3D.position.z = Number(atom.z3)
-        atom3D.parent = this.molecule
-        atom3D.doNotSyncBoundingInfo = true
-        atom3D.metadata = {}
-        atom3D.metadata.number = index + 1
-        atom3D.metadata.name = atom.elementType
-        atom3D.metadata.tick = false
-        atom3D.metadata.id = atom.id
-        tempAtom.Object3D = atom3D
-        tempAtom.x = Number(atom.x3)
-        tempAtom.y = Number(atom.y3)
-        tempAtom.z = Number(atom.z3)
-        tempAtom.number = index + 1
-        tempAtom.name = atom.elementType
-        tempAtom.id = atom.id
-        this.maxNumber = index + 1
-        this.atoms.add(tempAtom)
-      })
-      data.bondArray.bond.forEach((bond, index) => {
-        bond = bond.$
-        let ids = bond.atomRefs2.split(' ')
-        bonds.push([ids[0], ids[1], bond.order])
-      })
-      this.createBonds(bonds)
+      try {
+        data.atomArray.atom.forEach((atom, index) => {
+          atom = atom.$
+          let tempAtom = new Atom()
+          let atom3D = new BABYLON.Mesh.CreateSphere(atom[1], 16, this.colorAtoms[atom.elementType].radius / 100, this.scene)
+          atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
+          atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[atom.elementType].color)
+          atom3D.position.x = Number(atom.x3)
+          atom3D.position.y = Number(atom.y3)
+          atom3D.position.z = Number(atom.z3)
+          atom3D.parent = this.molecule
+          atom3D.doNotSyncBoundingInfo = true
+          atom3D.metadata = {}
+          atom3D.metadata.number = index + 1
+          atom3D.metadata.name = atom.elementType
+          atom3D.metadata.tick = false
+          atom3D.metadata.id = atom.id
+          tempAtom.Object3D = atom3D
+          tempAtom.x = Number(atom.x3)
+          tempAtom.y = Number(atom.y3)
+          tempAtom.z = Number(atom.z3)
+          tempAtom.number = index + 1
+          tempAtom.name = atom.elementType
+          tempAtom.id = atom.id
+          this.maxNumber = index + 1
+          this.atoms.add(tempAtom)
+        })
+      } catch (e) {
+        try {
+          let atom = data.atomArray.atom.$
+          let tempAtom = new Atom()
+          let atom3D = new BABYLON.Mesh.CreateSphere(atom[1], 16, this.colorAtoms[atom.elementType].radius / 100, this.scene)
+          atom3D.material = new BABYLON.StandardMaterial('material01', this.scene)
+          atom3D.material.diffuseColor = new BABYLON.Color3.FromHexString(this.colorAtoms[atom.elementType].color)
+          atom3D.position.x = Number(atom.x3)
+          atom3D.position.y = Number(atom.y3)
+          atom3D.position.z = Number(atom.z3)
+          atom3D.parent = this.molecule
+          atom3D.doNotSyncBoundingInfo = true
+          atom3D.metadata = {}
+          atom3D.metadata.number = 1
+          atom3D.metadata.name = atom.elementType
+          atom3D.metadata.tick = false
+          atom3D.metadata.id = atom.id
+          tempAtom.Object3D = atom3D
+          tempAtom.x = Number(atom.x3)
+          tempAtom.y = Number(atom.y3)
+          tempAtom.z = Number(atom.z3)
+          tempAtom.number = 1
+          tempAtom.name = atom.elementType
+          tempAtom.id = atom.id
+          this.maxNumber = 1
+          this.atoms.add(tempAtom)
+        } catch (e) {
+          console.log('Нет атомов', e)
+        }
+      }
+      try {
+        data.bondArray.bond.forEach((bond, index) => {
+          bond = bond.$
+          let ids = bond.atomRefs2.split(' ')
+          bonds.push([ids[0], ids[1], bond.order])
+        })
+        this.createBonds(bonds)
+      } catch (e) {
+        try {
+          let bond = data.bondArray.bond.$
+          let ids = bond.atomRefs2.split(' ')
+          bonds.push([ids[0], ids[1], bond.order])
+          this.createBonds(bonds)
+        } catch (e) {
+          console.log('Нет соединений', e)
+        }
+      }
     }
   }
   fileGetContents (url) {
