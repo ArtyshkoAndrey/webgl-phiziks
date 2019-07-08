@@ -5,42 +5,52 @@
                          overflow
                          floating
                          app>
-      <v-toolbar flat class="transparent">
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-title class="title">
-              Menu
-            </v-list-tile-title>
+      <v-layout column fill-height>
+        <v-toolbar flat class="transparent">
+          <v-list>
+            <v-list-tile>
+              <v-list-tile-title class="title">
+                Menu
+              </v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-toolbar>
+        <v-divider></v-divider>
+        <v-list dense>
+          <v-list-tile @click="$router.push('/')">
+            <v-list-tile-action>
+              <v-icon>home</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Home</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile @click="$router.push('/')">
+            <v-list-tile-action>
+              <v-icon class="blue--text">settings</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Settings</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile @click="require('electron').remote.getCurrentWindow().close()">
+            <v-list-tile-action>
+              <v-icon class="red--text">exit_to_app</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Close App</v-list-tile-title>
+            </v-list-tile-content>
           </v-list-tile>
         </v-list>
-      </v-toolbar>
-      <v-divider></v-divider>
-      <v-list dense>
-        <v-list-tile @click="$router.push('/')">
-          <v-list-tile-action>
-            <v-icon>home</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Home</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="$router.push('/')">
-          <v-list-tile-action>
-            <v-icon class="blue--text">settings</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Settings</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="require('electron').remote.getCurrentWindow().close()">
-          <v-list-tile-action>
-            <v-icon class="red--text">exit_to_app</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Close App</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+        <v-spacer></v-spacer>
+        <v-list class="py-0">
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title class="caption">Version of the program {{ ver }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-layout>
     </v-navigation-drawer>
     <v-toolbar app absolute>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -56,6 +66,7 @@
 
 <script>
   import { addWikiAtoms } from './../../static/libs/functions.js'
+  import { version } from './../../package.json'
   // import exec from 'executive'
   export default {
     name: 'gl',
@@ -64,7 +75,8 @@
         path: '',
         dark: true,
         drawer: null,
-        colorAtoms: null
+        colorAtoms: null,
+        ver: version
       }
     },
     mounted () {

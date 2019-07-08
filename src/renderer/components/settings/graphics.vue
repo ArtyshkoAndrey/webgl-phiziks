@@ -1,8 +1,15 @@
 <template>
   <!-- Modal -->
-  <v-dialog v-model="dialog" max-width="500">
+  <v-dialog v-model="dialog" max-width="500" fullscreen hide-overlay transition="dialog-bottom-transition">
+    <v-toolbar dark color="dark">
+      <v-btn icon dark @click="dialog = false">
+        <v-icon>close</v-icon>
+      </v-btn>
+      <v-toolbar-title>Graphics settings</v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
     <v-card>
-      <v-card-title class="headline">Graphics settings</v-card-title>
+<!--      <v-card-title class="headline">Graphics settings</v-card-title>-->
       <v-card-text>
         <v-container fluid class="pa-0">
           <v-layout row wrap>

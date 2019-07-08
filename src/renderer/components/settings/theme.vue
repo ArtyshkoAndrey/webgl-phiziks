@@ -2,7 +2,7 @@
   <!-- Modal -->
   <v-dialog v-model="dialog" max-width="290">
     <v-card>
-      <v-card-title class="headline">Choose theme</v-card-title>
+      <v-card-title class="headline" primary-title >Choose theme</v-card-title>
       <v-card-text>
         <v-radio-group v-model="localDark">
           <v-radio
