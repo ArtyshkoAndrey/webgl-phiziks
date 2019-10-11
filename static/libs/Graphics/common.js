@@ -33,6 +33,35 @@ export default class Graphics {
     // options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1.5))
     let optimizer = new BABYLON.SceneOptimizer(this.scene, options)
     optimizer.start()
+    this.scene.onPointerMove = () => {
+      let pickResult = this.scene.pick(this.scene.pointerX, this.scene.pointerY)
+      while (document.getElementById('mybut')) {
+        document.getElementById('mybut').parentNode.removeChild(document.getElementById('mybut'))
+      }
+      if (pickResult.hit && pickResult.pickedMesh.metadata.type === 'atom') {
+        let but = document.createElement('p')
+        // but.textContent = ' ';
+        but.setAttribute('id', 'mybut')
+        // but.zIndex = 0;
+        let sty = but.style
+        sty.position = 'absolute'
+        sty.padding = '5px'
+        sty.color = '#ffffff'
+        sty.borderRadius = '5px'
+        sty.backgroundColor = 'rgba(0,0,0,0.5)'
+        sty.zIndex = 999
+        sty.fontSize = '10pt'
+        sty.textAlign = 'center'
+        sty.top = this.scene.pointerY - 10 + 'px'
+        sty.left = 150 + this.scene.pointerX + 10 + 'px'
+        but.innerHTML = pickResult.pickedMesh.metadata.name + ' <br/> (' + pickResult.pickedMesh.metadata.id + ')'
+        // but.textContent =
+        but.setAttribute('onmouseover', 'this.style.left = parseInt(this.style.left, 10) + 30 + \'px\'')
+        document.body.appendChild(but)
+        console.log(pickResult)
+        // but.textContent = meshEvent.meshUnderPointer.name
+      }
+    }
     // optimizer.onFailureObservable.add(() => {
     // console.log(optimizer.currentFrameRate)
     // })

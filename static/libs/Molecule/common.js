@@ -289,6 +289,7 @@ class Molecule {
           atom3D.metadata.name = atom.elementType
           atom3D.metadata.tick = false
           atom3D.metadata.id = atom.id
+          atom3D.metadata.type = 'atom'
           tempAtom.Object3D = atom3D
           tempAtom.x = Number(atom.x3)
           tempAtom.y = Number(atom.y3)

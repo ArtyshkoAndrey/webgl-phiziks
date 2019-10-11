@@ -101,7 +101,15 @@
       }
     },
     mounted () {
+      this.e6 = JSON.parse(JSON.stringify(this.$store.getters.helloWord))
       console.log('Index.vue dark:', this.dark)
+    },
+    watch: {
+      e6: function (val) {
+        if (val === 5) {
+          this.$store.dispatch('setHelloWord', 5)
+        }
+      }
     },
     methods: {
       openFile (pr) {

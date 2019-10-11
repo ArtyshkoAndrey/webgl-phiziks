@@ -1,5 +1,5 @@
 {
-  "name": "webgl-phiziks",
+  "name": "atoms-view",
   "version": "0.4.0",
   "author": "Fulliton <artyshko.andrey@gmail.com>",
   "description": "The program for the creation of molecules by atoms, the construction of molecules, the creation of atoms. MOPAC's functionality",
@@ -20,7 +20,7 @@
   },
   "build": {
     "productName": "AtomsView",
-    "appId": "com.artushko.atomc-view",
+    "appId": "com.artushko.atoms-view",
     "directories": {
       "output": "build"
     },
