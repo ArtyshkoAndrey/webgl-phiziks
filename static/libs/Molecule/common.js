@@ -151,9 +151,11 @@ class Molecule {
   findAtom (id) {
     for (let atom of this.atoms) {
       if (atom.id === id) {
+        console.log(atom)
         return atom
       }
     }
+    console.warning('Нет атома с id ', id)
     return undefined
   }
   createBonds (bonds) {
@@ -199,6 +201,7 @@ class Molecule {
   }
   deleteAtom () {
     if (this.ticks.length > 0) {
+      let i = 0
       for (let atom of this.atoms) {
         if (this.ticks.includes(atom.Object3D.metadata.number)) {
           atom.Object3D.material.dispose()
@@ -206,8 +209,12 @@ class Molecule {
           atom.deleted = true
           this.atoms.delete(atom)
           this.saveDataFile()
+        } else {
+          i++
+          atom.id = 'a' + i
         }
       }
+      this.maxNumber = i
       this.ticks = []
     }
   }
@@ -235,6 +242,8 @@ class Molecule {
             let ids = bond.atomRefs2.split(' ')
             bonds.push([ids[0], ids[1], bond.order])
           })
+          console.log(bonds)
+          console.log(this.atoms)
           for (let bond of this.bonds) {
             bond.material.dispose()
             bond.dispose()
