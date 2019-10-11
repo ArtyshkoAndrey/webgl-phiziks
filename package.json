@@ -19,8 +19,8 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "gl",
-    "appId": "com.artushko.webgl-phiziks",
+    "productName": "AtomsView",
+    "appId": "com.artushko.atomc-view",
     "directories": {
       "output": "build"
     },
